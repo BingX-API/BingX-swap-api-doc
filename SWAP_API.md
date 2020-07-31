@@ -758,7 +758,7 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 
 | 参数名 | 参数类型  | 必填 | 字段描述
 | ------------- |----|----|----|
-| symbol    | String | 是 |  合约产品(BTC-USDT) |
+| symbol | String | 是 |  合约产品(BTC-USDT)，为空则返回全部 |
 | apiKey | String | 是 |  |
 
  ```javascript
@@ -778,7 +778,8 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
                     "entrustVolume": 18.098,
                     "filledVolume": 0,
                     "avgFilledPrice": 0,
-                    "orderId": "6030"
+                    "orderId": "6030",
+                    "symbol": "BTC-USDT",
                 },
                 {
                     "entrustTm": "2018-04-25T15:00:51.999Z",
@@ -789,7 +790,8 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
                     "entrustVolume": 18.098,
                     "filledVolume": 0,
                     "avgFilledPrice": 0,
-                    "orderId": "6030"
+                    "orderId": "6030",
+                    "symbol": "ETH-USDT",
                 },
             ]
         }
@@ -850,7 +852,7 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             "filledVolume": 0,
             "avgFilledPrice": 0,
             "orderId": "6030",
-     		"status": "Filled"
+            "status": "Filled"
      	}
      }
 ```
@@ -961,7 +963,7 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 
 | 参数名 | 参数类型  | 必填 | 字段描述
 | ------------- |----|----|----|
-| symbol    | String | 是 |  合约产品(BTC-USDT) |
+| symbol | String | 是 |  合约产品(BTC-USDT)，为空则表示全部都返回 |
 | apiKey | String | 是 |  |
 
  ```javascript
@@ -1063,6 +1065,45 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 
 
 **备注**
+
+
+### 8. 批量撤销订单
+
+  批量撤销订单
+
+**HTTP请求**
+
+
+```http
+    # Request
+    POST api/v1/user/batchCancelOrders
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| symbol    | String | 是 | 合约符号(BTC-USDT) |
+| apiKey | String | 是 | 接口密钥 |
+
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| orderId | String | 是 | 订单ID |
 
          
     更多返回错误代码请看首页的错误代码描述
