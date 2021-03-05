@@ -24,6 +24,12 @@ Bingbon交易所官方API文档
         - [1. 获取所有合约交易对信息](#1-获取所有合约交易对信息)
         - [2. 获取合约交易对交易深度](#2-获取合约交易对交易深度)
         - [3. 获取单个合约的最新成交记录](#3-获取单个合约的最新成交记录)
+        - [4. 获取单个资金费率历史记录](#4-获取单个资金费率历史记录)
+        - [5. 获取最新一条K线数据](#5-获取最新一条K线数据)
+        - [6. 获取K线历史数据](#6-获取K线历史数据)
+        - [7. 获取合约的最新价格信息](#7-获取合约的最新价格信息)
+        - [8. 获取合约当前最新的资金费率](#8-获取合约当前最新的资金费率)
+        - [9. 查询合约未平仓数量](#9-查询合约未平仓数量)
     - [永续合约账户API](#永续合约账户api)
         - [1. 下单交易](#1-下单交易)
         - [2. 撤销订单](#2-撤销订单)
@@ -31,7 +37,14 @@ Bingbon交易所官方API文档
         - [4. 查询单个订单的详情信息](#4-查询单个订单的详情信息)
         - [5. 获取用户账户资产信息](#5-获取用户账户资产信息)
         - [6. 查询用户持仓信息](#6-查询用户持仓信息)
-        - [7. 获取系统时间](#7-获取系统时间)
+        - [7. 批量撤销订单](#7-批量撤销订单)
+        - [8. 一键平仓下单](#8-一键平仓下单)
+        - [9. 全部一键平仓下单](#9-全部一键平仓下单)
+        - [10. 撤销全部订单](#10-撤销全部订单)
+        - [11. 修改账户保证金模式](#11-修改账户保证金模式)
+        - [12. 修改杠杆](#12-修改杠杆)
+    - [永续合约基础信息API](#永续合约基础信息api)
+        - [1. 获取系统时间](#1-获取系统时间)
 
 <!-- /TOC -->
 
@@ -204,10 +217,29 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 
 ```http
     # Request
-    GET api/v1/getAllContracts
+    GET api/v1/market/getAllContracts
     
     example： https://api-swap-rest.bingbon.pro/api/v1/market/getAllContracts
 ```
+
+**返回值说明**
+
+
+|返回字段 | 字段说明|
+| ---------- |:-------:|
+| code       | 是否有错误信息，0为正常，1为有错误|
+| msg        | 错误信息描述
+| contractId | 合约ID
+| symbol     | 合约产品符号，以A_B的形式返回  |
+| name       | 合约产品名字 |
+| size       | 合约大小，例如0.0001 BTC |
+| volumePrecision  | 交易数量精度 |
+| pricePrecision   | 价格精度 |
+| feeRate          | 交易手续费 |
+| tradeMinLimit    | 交易最小单位，单位为张 |
+| currency   | 结算和保证金货币资产 |
+| asset      | 合约交易资产 |
+
 ```javascript
     # Response
     {
@@ -240,26 +272,6 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
    } 
 ```
 
-
-
-**返回值说明**  
-
-
-|返回字段 | 字段说明|
-| ---------- |:-------:|
-| code       | 是否有错误信息，0为正常，1为有错误|
-| msg        | 错误信息描述
-| contractId | 合约ID
-| symbol     | 合约产品符号，以A_B的形式返回  |
-| name       | 合约产品名字 |
-| size       | 合约大小，例如0.0001 BTC |
-| volumePrecision  | 交易数量精度 |
-| pricePrecision   | 价格精度 |
-| feeRate          | 交易手续费 |
-| tradeMinLimit       | 交易最小单位 |
-| currency   | 结算和保证金货币资产 |
-| asset      | 合约交易资产 |
-
 ### 2. 获取合约交易对的交易深度
 
     获取合约对盘口深度的请求列表。
@@ -271,12 +283,24 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     GET api/v1/market/getMarketDepth
 ```
 
-**请求参数**  
+**请求参数**
 
 
 | 参数名 | 参数类型  | 必填 | 描述 |
 | ------------- |----|----|----|
 | symbol | String | 是 | 币对, 如 BTC-USDT |
+| level | String | 是 | 层数，没指定则默认返回5层 |
+
+**返回值说明**
+
+|返回字段|字段说明|
+| ------------- |----|
+| code   | 是否有错误信息，0为正常，1为有错误|
+| msg    | 错误信息描述
+| asks   | 卖方深度 |
+| bids   | 买方深度 |
+| p      | price价格  | float64
+| v      | volume数量 | float64
 
 
 ```javascript
@@ -285,59 +309,51 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
         "code": 0,
         "msg": "",
         "data": {
-            "asks": [[
-                    "p": 5319.94,
-                    "v": 0.05483456
-                ],[
-                    "p": 5320.19,
-                    "v": 1.05734545
-                ],[
-                    "p": 5320.39,
-                    "v": 1.16307999
-                ],[
-                    "p": 5319.94,
-                    "v": 0.05483456
-                ],[
-                    "p": 5320.19,
-                    "v": 1.05734545
-                ],[
-                    "p": 5320.39,
-                    "v": 1.16307999
-                ],
+            "asks": [
+              {
+                "p": 5319.94,
+                "v": 0.05483456
+              },{
+                "p": 5320.19,
+                "v": 1.05734545
+              },{
+                "p": 5320.39,
+                "v": 1.16307999
+              },{
+                "p": 5320.94,
+                "v": 0.05483456
+              },{
+                "p": 5330.19,
+                "v": 1.05734545
+              },{
+                "p": 5330.39,
+                "v": 1.16307999
+              },
             ],
-            "bids": [[
-                    "p": 5319.94,
-                    "v": 0.05483456
-                ],[
-                    "p": 5320.19,
-                    "v": 1.05734545
-                ],[
-                    "p": 5320.39,
-                    "v": 1.16307999
-                ],[
-                    "p": 5319.94,
-                    "v": 0.05483456
-                ],[
-                    "p": 5320.19,
-                    "v": 1.05734545
-                ],[
-                    "p": 5320.39,
-                    "v": 1.16307999
-                ],
+            "bids": [
+              {
+                "p": 5319.93,
+                "v": 0.05483456
+              },{
+                "p": 5318.19,
+                "v": 1.05734545
+              },{
+                "p": 5317.39,
+                "v": 1.16307999
+              },{
+                "p": 5316.94,
+                "v": 0.05483456
+              },{
+                "p": 5315.19,
+                "v": 1.05734545
+              },{
+                "p": 5314.39,
+                "v": 1.16307999
+              },
             ],
         }
     }
 ```
-**返回值说明**  
-
-|返回字段|字段说明|  
-| ------------- |----|
-| code   | 是否有错误信息，0为正常，1为有错误|
-| msg    | 错误信息描述
-| asks   | 卖方深度 |
-| bids   | 买方深度 |
-| p      | price价格  | float64
-| v      | volume数量 | float64
 
 ### 3. 获取单个合约的最新成交记录
 
@@ -356,7 +372,16 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | -------|--------|--- |-------|------|
 | symbol | String | 是 |合约名称| 合约名称后面需要加下划线(BTC-USDT) |
 
-   ```javascript
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| time      | data   |    | 成交时间 |
+| makerSide | String |    | 吃单方向(Buy / Sell 买/卖) |
+| price     | String |    | 成交价格 |
+| volume    | String |    | 成交数量 |
+
+```javascript
     # Response
     {
         "code": 0,
@@ -365,35 +390,21 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             "trades": [
                 {
                     "time": "2018-04-25T15:00:51.999Z",
-                    "makerSide": "Bid",
+                    "makerSide": "Buy",
                     "price": 0.279563,
                     "volume": 100,
                 },
                 {
                     "time": "2018-04-25T15:00:51.000Z",
-                    "makerSide": "Ask",
+                    "makerSide": "Sell",
                     "price": 0.279563,
                     "volume": 300,
                 }
             ]
         }
     }
-   ```
+```
 
-   **返回值说明**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| time      | data   |    | 成交时间 |
-| makerSide | String |    | 吃单方向(Bid / Ask 买/卖) |
-| price     | String |    | 成交价格 |
-| volume    | String |    | 成交数量 |
-
-
-  **备注**
-
-
-    更多返回错误代码请看首页的错误代码描述
 
 ### 4. 获取单个资金费率历史记录
 
@@ -412,7 +423,17 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | -------|--------|--- |-------|------|
 | symbol | String | 是 |合约名称| 合约名称后面需要加下划线(BTC-USDT) |
 
-   ```javascript
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| historyId     | String |    | 历史ID号 |
+| fundingRate   | String |    | 资金费率 |
+| fairPrice     | String |    | 标记价格 |
+| interval      | String |    | 资金费率结算周期，单位：小时 |
+| time          | data   |    | 结算时间 |
+
+```javascript
     # Response
     {
         "code": 0,
@@ -438,23 +459,8 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             ]
         }
     }
-   ```
+```
 
-   **返回值说明**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| historyId     | String |    | 历史ID号 |
-| fundingRate   | String |    | 资金费率 |
-| fairPrice     | String |    | 标记价格 |
-| interval      | String |    | 资金费率结算周期，单位：小时 |
-| time          | data   |    | 结算时间 |
-
-
-  **备注**
-
-
-    更多返回错误代码请看首页的错误代码描述
 
 ### 5. 获取最新一条K线数据
 
@@ -492,6 +498,17 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | 1W        | 1W周K线 |
 | 1M        | 1M月K线 |
 
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| open     | float64 |    | 开盘价 |
+| close    | float64 |    | 收盘价 |
+| high     | float64 |    | 最高价 |
+| low      | float64 |    | 最低价 |
+| volume   | float64 |    | 交易数量 |
+| ts       | int64  |    | k线时间戳，单位毫秒 |
+
 ```javascript
 # Response
     {
@@ -508,21 +525,8 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             }
         }
     }
-   ```
+```
 
-**返回值说明**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| open     | float64 |    | 开盘价 |
-| close    | float64 |    | 收盘价 |
-| high     | float64 |    | 最高价 |
-| low      | float64 |    | 最低价 |
-| volume   | float64 |    | 交易数量 |
-| ts       | int64  |    | k线时间戳，单位毫秒 |
-
-**备注**
-    更多返回错误代码请看首页的错误代码描述
 
 ### 6. 获取K线历史数据
 
@@ -561,6 +565,18 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | 1D        | 1D日K线 |
 | 1W        | 1W周K线 |
 | 1M        | 1M月K线 |
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| klines   | 数组     |    | K线数据 |
+| open     | float64 |    | 开盘价 |
+| close    | float64 |    | 收盘价 |
+| high     | float64 |    | 最高价 |
+| low      | float64 |    | 最低价 |
+| volume   | float64 |    | 交易数量 |
+| ts       | int64  |    | k线时间戳，单位毫秒 |
 
 ```javascript
 # Response
@@ -628,23 +644,124 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             ]
         }
     }
-   ```
+```
+
+
+### 7. 获取合约的最新价格信息
+
+    获取合约的最新价格信息
+
+**HTTP请求**
+
+  ```http
+    # Request
+    GET api/v1/market/getLatestPrice
+```
+
+**请求参数**
+
+| 参数名  | 参数类型  | 必填 | 字段描述 | 描述 |
+| -------|--------|--- |-------|------|
+| symbol | String | 是 |合约名称| 合约名称后面需要加下划线(BTC-USDT) |
 
 **返回值说明**
 
 | 参数名 | 参数类型  | 必填 | 描述 |
 | ------------- |----|----|----|
-| klines   | 数组     |    | K线数据 | 
-| open     | float64 |    | 开盘价 |
-| close    | float64 |    | 收盘价 |
-| high     | float64 |    | 最高价 |
-| low      | float64 |    | 最低价 |
-| volume   | float64 |    | 交易数量 |
-| ts       | int64  |    | k线时间戳，单位毫秒 |
+| tradePrice    | float64 |    | 成交价格 |
+| indexPrice    | float64 |    | 指数价格 |
+| fairPrice     | float64 |    | 标记价格 |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "tradePrice": "50000.18",
+          "indexPrice": "50000.18",
+          "fairPrice": "50000.18"
+        }
+    }
+```
 
 
-**备注**
-    更多返回错误代码请看首页的错误代码描述
+### 8. 获取合约当前最新的资金费率
+
+    获取合约当前最新的资金费率
+
+**HTTP请求**
+
+  ```http
+    # Request
+    GET api/v1/market/getLatestFunding
+```
+
+**请求参数**
+
+| 参数名  | 参数类型  | 必填 | 字段描述 | 描述 |
+| -------|--------|--- |-------|------|
+| symbol | String | 是 |合约名称| 合约名称后面需要加下划线(BTC-USDT) |
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| fundingRate   | float64 |    | 当前资金费率 |
+| fairPrice     | float64 |    | 当前的标记价格 |
+| leftSeconds   | float64 |    | 下次结算剩余时间，单位为秒 |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "fundingRate": "0.3000",
+          "fairPrice": "182.90",
+          "leftSeconds": "1024",
+        }
+    }
+```
+
+
+
+### 9. 查询合约未平仓数量
+
+    查询合约未平仓数量
+
+**HTTP请求**
+
+  ```http
+    # Request
+    GET api/v1/market/getOpenPositions
+```
+
+**请求参数**
+
+| 参数名  | 参数类型  | 必填 | 字段描述 | 描述 |
+| -------|--------|--- |-------|------|
+| symbol | String | 是 |合约名称| 合约名称后面需要加下划线(BTC-USDT) |
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| volume  | float64 |    | 持仓数量 |
+| unit    | string  |    | 持仓数量对应的单位，CONT(张), BTC, ETH, LINK, BCH等等 |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "volume": "10.00",
+          "unit": "BTC",
+        }
+    }
+```
+
 
 ## 交易API
 
@@ -665,18 +782,24 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 
     POST
 
-**请求参数**  
+**请求参数**
 
 | 参数名 | 参数类型  | 必填 | 描述 |
 | ------------- |----|----|----|
 | symbol | String | 是 | 合约符号(BTC-USDT) |
 | apiKey | String | 是 | 接口密钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
 | side | String | 是 | (Bid/Ask 买/卖) |
 | entrustPrice | float64 | 是 | 价格  |
 | entrustVolume | float64 | 是 | 数量 |
 | tradeType | String | 是 | Market/Limit  市价/限价 |
 | action | String | 是 | Open/Close 开仓/平仓  |
 
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| orderId | String | 是 | 订单ID |
 
 ```javascript
 # Response
@@ -688,12 +811,6 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
         }
     }
 ```
-
-**返回值说明**  
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ---- |---- | ---- | ---- |
-| orderId | String | 是 | 订单ID |
 
 
 
@@ -721,6 +838,12 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | orderId   | String | 是 | 订单ID |
 | symbol    | String | 是 | 合约符号(BTC-USDT) |
 | apiKey | String | 是 | 接口密钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| orderId | String | 是 | 订单ID |
 
 
 ```javascript
@@ -733,10 +856,6 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
         }
     }
 ```
-**返回值说明**
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ---- |---- | ---- | ---- |
-| orderId | String | 是 | 订单ID |
 
 
 ### 3. 查询委托中的订单
@@ -760,6 +879,21 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | ------------- |----|----|----|
 | symbol | String | 是 |  合约产品(BTC-USDT)，为空则返回全部 |
 | apiKey | String | 是 |  |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+ **返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| entrustTm     | String  | 是 | 订单委托时间 |
+| side          | String  | 是 | 交易方向(Bid/Ask 买/卖) |
+| tradeType     | String  | 是 | 委托类型(Market/Limit 市价/限价) |
+| action        | String  | 是 | Open/Close 开仓/平仓 |
+| entrustPrice  | Float64 | 是 | 委托价格 |
+| entrustVolume | Float64 | 是 | 委托数量 |
+| avgFilledPrice| Float64 | 是 | 成交均价 |
+| filledVolume  | Float64 | 是 | 成交数量 |
+| orderId       | String  | 是 | 订单号 |
 
  ```javascript
 
@@ -797,24 +931,7 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
         }
     }
  ```
- 
- **返回值说明**  
 
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| entrustTm     | String  | 是 | 订单委托时间 |
-| side          | String  | 是 | 交易方向(Bid/Ask 买/卖) |
-| tradeType     | String  | 是 | 委托类型(Market/Limit 市价/限价) |
-| action        | String  | 是 | Open/Close 开仓/平仓 |
-| entrustPrice  | Float64 | 是 | 委托价格 |
-| entrustVolume | Float64 | 是 | 委托数量 |
-| avgFilledPrice| Float64 | 是 | 成交均价 |
-| filledVolume  | Float64 | 是 | 成交数量 |
-| orderId       | String  | 是 | 订单号 |
-
-  **备注**
-  
-    更多返回错误代码请看首页的错误代码描述
   
 ### 4. 查询单个订单的详情信息
    
@@ -834,28 +951,9 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | 参数名 | 参数类型  | 必填 | 描述 |
 | ------------- |----|----|----|
 | apiKey | String | 是 | 接口秘钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
 | symbol | String | 是 | 合约符号(BTC-USDT) |
 | orderId | String | 是 | 订单ID |
-
-```javascript
-    # Response
-    {
-        "code": 0,
-        "msg": "",
-        "data": {
-            "entrustTm": "2018-04-25T15:00:51.000Z",
-            "side": "Ask",
-            "tradeType": "Limit",
-            "action": "Close",
-            "entrustPrice": 6.021954,
-            "entrustVolume": 18.098,
-            "filledVolume": 0,
-            "avgFilledPrice": 0,
-            "orderId": "6030",
-            "status": "Filled"
-     	}
-     }
-```
 
 **返回值说明**
 
@@ -882,8 +980,25 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | Filled            | 已完成 |
 | Failed            | 失败 |
 
-  
-更多返回错误代码请看首页的错误代码描述
+```javascript
+    # Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+            "entrustTm": "2018-04-25T15:00:51.000Z",
+            "side": "Ask",
+            "tradeType": "Limit",
+            "action": "Close",
+            "entrustPrice": 6.021954,
+            "entrustVolume": 18.098,
+            "filledVolume": 0,
+            "avgFilledPrice": 0,
+            "orderId": "6030",
+            "status": "Filled"
+        }
+    }
+```
 
 ### 5. 获取用户账户资产信息
 
@@ -903,36 +1018,19 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | 参数名 | 参数类型  | 必填 |字段描述 |描述 |
 | ------------- |----|----|---|---- |
 | apiKey | String | 是 | 接口秘钥 | |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 | |
 | currency  | String | 是  | 合约资产 | |
 
-    ```javascript
-        # Response
-            {
-                "code": 0,
-                "msg": "",
-                "data": {
-                    "userId": "123",
-                    "currency": "USDT",
-                    "balance": 123.33,
-                    "equity": 128.99,
-                    "unrealisedPNL": 1.22,
-                    "realisedPNL": 8.1,
-                    "availableMargin": 123.33,
-                    "usedMargin": 2.2,
-                    "freezedMargin": 3.3,
-                    "longLeverage": 10,
-                    "shortLeverage": 10,
-                }
-            }
-    ```
 **返回值说明**
 
 | 参数名 | 参数类型  | 必填 | 描述 |
 | ------------- |----|----|----|
-| userId	    | String | 是 | 用户ID |
-| currency   | String | 是 | 用户资产 |
-| balance    | Float64 | 是 | 资产余额 |
-| equity     | Float64 | 是 | 资产净值 |
+| code           | Int64   | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg            | String  | 是 | 错误信息提示 |
+| userId	       | String | 是 | 用户ID |
+| currency       | String | 是 | 用户资产 |
+| balance        | Float64 | 是 | 资产余额 |
+| equity         | Float64 | 是 | 资产净值 |
 | unrealisedPNL  | Float64 | 是 | 未实现盈亏 |
 | realisedPNL    | Float64 | 是 | 已实现盈亏 |
 | availableMargin| Float64 | 是 | 可用保证金 |
@@ -941,8 +1039,26 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | longLeverage   | Float64 | 是 | 做多杠杆 |
 | shortLeverage  | Float64 | 是 | 做空杠杆 |
 
-**备注**
-
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+            "userId": "123",
+            "currency": "USDT",
+            "balance": 123.33,
+            "equity": 128.99,
+            "unrealisedPNL": 1.22,
+            "realisedPNL": 8.1,
+            "availableMargin": 123.33,
+            "usedMargin": 2.2,
+            "freezedMargin": 3.3,
+            "longLeverage": 10,
+            "shortLeverage": 10,
+        }
+    }
+```
 
 ### 6. 查询用户持仓信息
 
@@ -965,8 +1081,28 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | ------------- |----|----|----|
 | symbol | String | 是 |  合约产品(BTC-USDT)，为空则表示全部都返回 |
 | apiKey | String | 是 |  |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
 
- ```javascript
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| code           | Int64   | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg            | String  | 是 | 错误信息提示 |
+| symbol         | String  | 是 | 合约品种 |
+| currency       | String  | 是 | 用户资产 |
+| positionSide   | String  | 是 | 仓位方向 Long/Short 多/空 |
+| marginMode     | String  | 是 | 保证金模式 Cross/Isolated 全仓/逐仓  |
+| volume         | Float64 | 是 | 持仓数量 |
+| availableVolume| Float64 | 是 | 可平仓数量 |
+| unrealisedPNL  | Float64 | 是 | 未实现盈亏 |
+| realisedPNL    | Float64 | 是 | 已实现盈亏 |
+| margin         | Float64 | 是 | 保证金 |
+| avgPrice       | Float64 | 是 | 开仓均价 |
+| liquidatedPrice| Float64 | 是 | 预估强平价 |
+| leverage       | Float64 | 是 | 杠杆 |
+
+```javascript
 
 # Response
     {
@@ -1005,69 +1141,9 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             ]
         }
     }
- ```
- 
-**返回值说明**  
+```
 
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| symbol         | String  | 是 | 合约品种 |
-| currency       | String  | 是 | 用户资产 |
-| positionSide   | String  | 是 | 仓位方向 Long/Short 多/空 |
-| marginMode     | String  | 是 | 保证金模式 Cross/Isolated 全仓/逐仓  |
-| volume         | Float64 | 是 | 持仓数量 |
-| availableVolume| Float64 | 是 | 可平仓数量 |
-| unrealisedPNL  | Float64 | 是 | 未实现盈亏 |
-| realisedPNL    | Float64 | 是 | 已实现盈亏 |
-| margin         | Float64 | 是 | 保证金 |
-| avgPrice       | Float64 | 是 | 开仓均价 |
-| liquidatedPrice| Float64 | 是 | 预估强平价 |
-| leverage       | Float64 | 是 | 杠杆 |
-
-**备注**
-  
-    更多返回错误代码请看首页的错误代码描述
-    
-### 7. 获取系统时间
-
-    获取系统时间
- 
-**HTTP请求**
-
-  ```http
-        # Request
-        POST api/v1/server/time
-  ```
-  
-**请求方式**
-
-    GET / POST
-
-               
-**请求参数**  
-  
-    无   
-             
-   ```javascript
-    # Response
-        {
-            "code": 0,
-            "msg": "",
-            "currentTime": 1534431933321
-        }
-   ```
-           
-**返回值说明**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| currentTime |Int64  | 是 | 系统当前时间，单位毫秒 |
-
-
-**备注**
-
-
-### 8. 批量撤销订单
+### 7. 批量撤销订单
 
   批量撤销订单
 
@@ -1089,6 +1165,13 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | ------------- |----|----|----|
 | symbol    | String | 是 | 合约符号(BTC-USDT) |
 | apiKey | String | 是 | 接口密钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| code    | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg     | String | 是 | 错误信息提示 |
 
 
 ```javascript
@@ -1100,14 +1183,257 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
         }
     }
 ```
+
+### 8. 一键平仓下单
+
+  一键平仓下单
+
+**HTTP请求**
+
+
+```http
+    # Request
+    POST api/v1/user/oneClickClosePosition
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| symbol     | String | 是 | 合约符号(BTC-USDT) |
+| positionId | Int64  | 是 | 一键平仓对应的仓位ID |
+| apiKey     | String | 是 | 接口密钥 |
+| timestamp  | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
 **返回值说明**
 | 参数名 | 参数类型  | 必填 | 描述 |
 | ---- |---- | ---- | ---- |
-| orderId | String | 是 | 订单ID |
+| code    | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg     | String | 是 | 错误信息提示 |
+| orderId | String | 是 | 一键平仓产生的委托订单ID |
 
-         
-    更多返回错误代码请看首页的错误代码描述
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
 
+
+### 9. 全部一键平仓下单
+
+  全部一键平仓下单
+
+**HTTP请求**
+
+
+```http
+    # Request
+    POST api/v1/user/oneClickCloseAllPositions
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| symbol    | String | 是 | 合约符号(BTC-USDT) |
+| apiKey | String | 是 | 接口密钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| code    | Int64      | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg     | String     | 是 | 错误信息提示 |
+| orders  | String数组  | 是 | 全部一键平仓产生的多个委托订单ID |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "orders": ["123", "456", "789"]
+        }
+    }
+```
+
+### 10. 撤销全部订单
+
+  撤销全部订单
+
+**HTTP请求**
+
+
+```http
+    # Request
+    POST api/v1/user/cancelAll
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| apiKey | String | 是 | 接口密钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| code | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg  | String | 是 | 错误信息提示 |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+
+### 11. 修改账户保证金模式
+
+  修改账户保证金模式
+
+**HTTP请求**
+
+
+```http
+    # Request
+    POST api/v1/user/setMarginMode
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| symbol      | String | 是 | 合约符号(BTC-USDT) |
+| marginMode  | String | 是 | Isolated or Cross, 账户保证金模式，逐仓或者全仓 |
+| apiKey      | String | 是 | 接口密钥 |
+| timestamp   | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| code | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg  | String | 是 | 错误信息提示 |
+
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+### 12. 修改杠杆
+
+  修改杠杆
+
+**HTTP请求**
+
+
+```http
+    # Request
+    POST api/v1/user/setLeverage
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| symbol    | String | 是 | 合约符号(BTC-USDT) |
+| side      | String | 是 | 多仓或者空仓的杠杆，Long表示多仓，Short表示空仓 |
+| leverage  | String | 是 | 杠杆倍数 |
+| apiKey    | String | 是 | 接口密钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| code | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg  | String | 是 | 错误信息提示 |
+
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+## 基础信息API
+
+### 1. 获取系统时间
+
+    获取系统时间
+
+**HTTP请求**
+
+```http
+    # Request
+    POST api/v1/common/server/time
+```
+
+**请求方式**
+
+    GET / POST
+
+
+**请求参数**
+
+    无
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| code        | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg         | String | 是 | 错误信息提示 |
+| currentTime | Int64  | 是 | 系统当前时间，单位毫秒 |
+
+```javascript
+    # Response
+    {
+        "code": 0,
+        "msg": "",
+        "currentTime": 1534431933321
+    }
+```
+
+**备注**
     
 [Bingbon]: https://bingbon.pro
 [English Docs]: https://bingbon.pro
