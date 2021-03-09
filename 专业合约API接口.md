@@ -71,14 +71,18 @@ API Key 和 Secret Key将由随机生成和提供。
 
 * API Key作为一个字符串。
 * sign 使用一定算法得出的签名（请参阅签名信息）。
-* timestamp 作为您的请求的时间戳。
+* timestamp 作为您的请求的时间戳，单位为毫秒。
 * 所有请求都应该含有application/json类型内容，并且是有效的JSON。
 
 ## 签名
-sign 参数是对 **所有参数(含timestamp)按照字典排序之后，按照key1=value1 + key2=value2 ... + Secret Key** 字符串(+表示字符串连接)使用 **HMAC SHA256** 方法加密而得到的。
+sign 是对http method，url path，请求参数等按字符串连接之后使用 **HMAC SHA256** 方法加密而得到的。
 
+* path 为URL的请求路径，例如: /api/v1/user/getBalance
 * method 是请求方法(POST/GET/PUT/DELETE)，字母全部大写。
+* 参数是对 **所有参数(含timestamp)按照字典排序之后，按照key1=value1 + key2=value2 ... + Secret Key** 字符串(+表示字符串连接)。
 
+originString = method + path + params
+sign = HmacSHA256(originString)
 
 **例如：对于如下的请求参数进行签名**
 
@@ -86,24 +90,31 @@ sign 参数是对 **所有参数(含timestamp)按照字典排序之后，按照k
 curl "https://api-swap-rest.bingbon.pro/api/v1/user/getBalance"
       
 ```
-* 获取获取用户某资产余额信息，以 apiKey=bingbonOneUser123, secretKey=bingbonSecondUser456 为例
+* 通过POST方式获取获取用户某资产余额信息，以 apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU, secretKey=UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI 为例
 ```
-timestamp = 1540286290170
-apiKey = bingbonOneUser123
-currency = BTC
-```
-
-按字典排序之后，为
-```
-apiKey = bingbonOneUser123
-currency = BTC
-timestamp = 1540286290170
+timestamp = 1615272721001
+apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
+currency = USDT
 ```
 
-生成待签名的字符串
+请求参数按字典排序之后，为
+```
+apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
+currency = USDT
+timestamp = 1615272721001
+```
+
+mothod为POST，path为/api/v1/user/getBalance，生成待签名的参数字符串如下:
 
 ```
-originString = 'apiKey=bingbonOneUser123&currency=BTC&timestamp=1540286290170'
+paramString = 'apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001'
+
+```
+
+按算法生成待签名的字符串
+
+```
+originString = 'POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001'
   
 ```
 
@@ -114,18 +125,18 @@ originString = 'apiKey=bingbonOneUser123&currency=BTC&timestamp=1540286290170'
 ```
 Signature = HmacSHA256(secretkey, originString)
 即：
-Signature = HmacSHA256("bingbonSecondUser456", "apiKey=bingbonOneUser123&currency=BTC&timestamp=1540286290170")
+Signature = HmacSHA256("UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI", "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001")
 
 ```
-假如Signature的结果为bingbonHashxxxxyyyyzzzz，则签名之后的url query参数为
+Signature的结果为xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D，则签名之后的url query参数为
 ```
-apiKey = ABC
-currency = BTC
-timestamp = 1540286290170
-sign = aabbbbccccffffeeeeffff
+apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
+currency = USDT
+timestamp = 1615272721001
+sign = xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D
 
 即最终发送给服务器的API请求应该为：
-"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=bingbonOneUser123&currency=BTC&timestamp=1540286290170&sign=bingbonHashxxxxyyyyzzzz"
+"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001&sign=xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D"
 ```
 
 ## 请求交互  
