@@ -3,48 +3,44 @@ Bingbon交易所官方API文档
 [Bingbon][]交易所开发者文档([English Docs][])。
 
 <!-- TOC -->
-
 - [介绍](#介绍)
-- [API接口加密验证](#api接口加密验证)
-    - [生成API Key](#生成api-key)
-    - [发起请求](#发起请求)
-    - [签名](#签名)
-    - [选择时间戳](#选择时间戳)
+- [签名认证](#签名认证)
+    - [创建API](#创建API)
+    - [请求内容](#请求内容)
+    - [签名说明](#签名说明)
     - [请求交互](#请求交互)
-        - [请求](#请求)
-        - [分页](#分页)
-    - [标准规范](#标准规范)
-        - [时间戳](#时间戳)
-        - [例子](#例子)
-        - [数字](#数字)
-        - [限流](#限流)
-            - [REST API](#rest-api)
-- [永续合约业务API参考](#永续合约业务api参考)
-    - [永续合约行情API](#永续合约行情api)
-        - [1. 获取所有合约交易对信息](#1-获取所有合约交易对信息)
-        - [2. 获取合约交易对交易深度](#2-获取合约交易对交易深度)
-        - [3. 获取单个合约的最新成交记录](#3-获取单个合约的最新成交记录)
-        - [4. 获取单个资金费率历史记录](#4-获取单个资金费率历史记录)
-        - [5. 获取最新一条K线数据](#5-获取最新一条K线数据)
-        - [6. 获取K线历史数据](#6-获取K线历史数据)
-        - [7. 获取合约的最新价格信息](#7-获取合约的最新价格信息)
-        - [8. 获取合约当前最新的资金费率](#8-获取合约当前最新的资金费率)
-        - [9. 查询合约未平仓数量](#9-查询合约未平仓数量)
-    - [永续合约账户API](#永续合约账户api)
-        - [1. 下单交易](#1-下单交易)
-        - [2. 撤销订单](#2-撤销订单)
-        - [3. 查询用户委托中的订单](#3-查询用户委托中的订单)
-        - [4. 查询单个订单的详情信息](#4-查询单个订单的详情信息)
-        - [5. 获取用户账户资产信息](#5-获取用户账户资产信息)
-        - [6. 查询用户持仓信息](#6-查询用户持仓信息)
-        - [7. 批量撤销订单](#7-批量撤销订单)
-        - [8. 一键平仓下单](#8-一键平仓下单)
-        - [9. 全部一键平仓下单](#9-全部一键平仓下单)
-        - [10. 撤销全部订单](#10-撤销全部订单)
-        - [11. 修改账户保证金模式](#11-修改账户保证金模式)
-        - [12. 修改杠杆](#12-修改杠杆)
-    - [永续合约基础信息API](#永续合约基础信息api)
-        - [1. 获取系统时间](#1-获取系统时间)
+- [基础信息](#基础信息)
+    - [常见错误码](#常见错误码)
+    - [时间戳规范](#时间戳规范)
+    - [数字规范](#数字规范)
+    - [频率限制](#频率限制)
+        - [REST API](#rest-api)
+    - [查询系统时间](#查询系统时间)
+- [行情接口](#行情接口)
+    - [查询合约基础信息](#1-查询合约基础信息)、
+    - [查询合约最新价格](#2-查询合约最新价格)
+    - [查询合约交易深度](#3-查询合约交易深度)
+    - [查询最新成交记录](#4-查询最新成交记录)
+    - [查询最新资金费率](#5-查询最新资金费率)
+    - [查询资金费率历史](#6-查询资金费率历史)
+    - [查询K线最新数据](#7-查询K线最新数据)
+    - [查询K线历史数据](#8-查询K线历史数据)
+    - [查询合约未平仓数量](#9-查询合约未平仓数量)
+- [账户接口](#账户接口)
+    - [查询账户信息](#1-查询账户信息)
+    - [查询持仓信息](#2-查询持仓信息)
+- [交易接口](#交易接口)
+    - [交易下单](#1-交易下单)
+    - [一键平仓下单](#2-一键平仓下单)
+    - [全部一键平仓下单](#3-全部一键平仓下单)
+    - [撤销订单](#4-撤销订单)
+    - [批量撤销订单](#5-批量撤销订单)
+    - [撤销全部订单](#6-撤销全部订单)
+    - [查询当前委托订单](#7-查询当前委托订单)
+    - [查询订单详情](#8-查询订单详情)
+    - [切换全仓/逐仓](#9-切换全仓/逐仓)
+    - [修改杠杆](#10-修改杠杆)
+
 
 <!-- /TOC -->
 
@@ -52,29 +48,28 @@ Bingbon交易所官方API文档
 
 欢迎使用[Bingbon][]开发者文档。
 
-本文档提供了永续合约交易业务的账户管理、行情查询、交易功能等相关API的使用方法介绍。
+本文档提供了专业合约交易业务的账户管理、行情查询、交易功能等相关API的使用方法介绍。
 行情API提供市场的公开的行情数据接口，账户和交易API需要身份验证，提供下单、撤单，查询订单和帐户信息等功能。
 
-# API接口加密验证
-## 生成API Key
+# 签名认证
+## 创建API
 
-在对任何请求进行签名之前，您必须通过 Bingbon 网站【用户中心】-【API】创建一个API key。 创建key后，您将获得2个必须记住的信息：
+在对任何请求进行签名之前，您必须通过 Bingbon 网站【用户中心】-【API管理(专业合约)】创建一个API key。 创建key后，您将获得2个必须记住的信息：
 * API Key
 * Secret Key
 
-
 API Key 和 Secret Key将由随机生成和提供。
 
-## 发起请求
+## 请求内容
 
 所有REST请求都必须包含以下参数：
 
 * API Key作为一个字符串。
 * sign 使用一定算法得出的签名（请参阅签名信息）。
-* timestamp 作为您的请求的时间戳，单位为毫秒。
+* timestamp 作为您的请求的时间戳。
 * 所有请求都应该含有application/json类型内容，并且是有效的JSON。
 
-## 签名
+## 签名说明
 sign 是对http method，url path，请求参数等按字符串连接之后使用 **HMAC SHA256** 方法加密而得到的。
 
 * path 为URL的请求路径，例如: /api/v1/user/getBalance
@@ -143,8 +138,6 @@ sign = xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D
 
 REST访问的根URL：`https://api-swap-rest.bingbon.pro`
 
-### 请求
-
 所有请求基于Https协议，请求头信息中Content-Type 需要统一设置为:'application/json’。
 
 **请求交互说明**
@@ -161,36 +154,40 @@ REST访问的根URL：`https://api-swap-rest.bingbon.pro`
 
 HTTP状态码200表示成功响应，并可能包含内容。如果响应含有内容，则将显示在相应的返回内容里面。
 
+# 基础信息
+## 常见错误码
+
 **常见HTTP错误码**
 
+###类型:
 * 4XX 错误码用于指示错误的请求内容、行为、格式
 
 * 5XX 错误码用于指示Bingbon服务侧的问题
 
+###错误码:
 * 400 Bad Request – Invalid request format 请求格式无效
 
 * 401 Unauthorized – Invalid API Key 无效的API Key
 
 * 403 Forbidden – You do not have access to the requested resource 请求无权限
 
-* 404 Not Found 没有找到请求
+* 404 - Not Found 没有找到请求
 
-* 429 Too Many Requests 请求太频繁被系统限流
+* 429 - Too Many Requests 请求太频繁被系统限流
 
-* 418 表示收到429后继续访问，于是被封了
+* 418 - 表示收到429后继续访问，于是被封了
 
-* 500 Internal Server Error – We had a problem with our server 服务器内部错误
+* 500 - Internal Server Error – We had a problem with our server 服务器内部错误
 
-* 504 表示API服务端已经向业务核心提交了请求但未能获取响应，特别需要注意的是504代码不代表请求失败，而是未知。很可能已经得到了执行，也有可能执行失败，需要做进一步确认
+* 504 - 表示API服务端已经向业务核心提交了请求但未能获取响应(特别需要注意的是504代码不代表请求失败，而是未知。很可能已经得到了执行，也有可能执行失败，需要做进一步确认)
 
+###注意:
 * 如果失败，response body 带有错误描述信息
 
 * 每个接口都有可能抛出异常
 
 
-## 标准规范
-
-### 时间戳
+## 时间戳规范
 
 除非另外指定，API中的所有时间戳均以微秒为单位返回。
 
@@ -200,29 +197,62 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 
 1587091154123
 
-### 数字
+## 数字规范
 
 为了保持跨平台时精度的完整性，十进制数字作为字符串返回。建议您在发起请求时也将数字转换为字符串以避免截断和精度错误。 
 
 整数（如交易编号和顺序）不加引号。
 
-### 限流
+## 频率限制
 
 如果请求过于频繁系统将自动限制请求。
 
-##### REST API
+### REST API
 
-* 行情接口：我们通过IP限制公共接口的调用：每1秒最多10个请求。
+* 行情接口：通过IP限制公共接口的调用，每1秒最多60个请求。
 
-* 账户和交易接口：我们通过用户ID限制私人接口的调用：每1秒最多10个请求。
+* 账户和交易接口：通过用户ID限制私人接口的调用，每1秒最多10个请求。
 
 * 某些接口的特殊限制在具体的接口上注明
 
-# 永续合约业务API参考
+## 查询系统时间
 
-## 永续合约行情API
+**HTTP请求**
 
-### 1. 获取所有交易对信息
+```http
+    # Request
+    POST api/v1/common/server/time
+```
+
+**请求方式**
+
+    GET / POST
+
+
+**请求参数**
+
+    无
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| code        | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg         | String | 是 | 错误信息提示 |
+| currentTime | Int64  | 是 | 系统当前时间，单位毫秒 |
+
+```javascript
+    # Response
+    {
+        "code": 0,
+        "msg": "",
+        "currentTime": 1534431933321
+    }
+```
+
+# 行情接口
+
+## 1. 查询合约基础信息     
 
 **HTTP请求**
 
@@ -234,7 +264,6 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 ```
 
 **返回值说明**
-
 
 |返回字段 | 字段说明|
 | ---------- |:-------:|
@@ -283,9 +312,42 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
    } 
 ```
 
-### 2. 获取合约交易对的交易深度
+## 2. 查询合约最新价格
 
-    获取合约对盘口深度的请求列表。
+**HTTP请求**
+
+```http
+    # Request
+    GET api/v1/market/getLatestPrice
+```
+
+**请求参数**
+
+| 参数名  | 参数类型  | 必填 | 字段描述 | 描述 |
+| -------|--------|--- |-------|------|
+| symbol | String | 是 |合约名称| 合约名称后面需要加下划线(BTC-USDT) |
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| tradePrice    | float64 |    | 成交价格 |
+| indexPrice    | float64 |    | 指数价格 |
+| fairPrice     | float64 |    | 标记价格 |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "tradePrice": "50000.18",
+          "indexPrice": "50000.18",
+          "fairPrice": "50000.18"
+        }
+    }
+```
+## 3. 查询合约交易深度
 
 **HTTP请求**
 
@@ -295,7 +357,6 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 ```
 
 **请求参数**
-
 
 | 参数名 | 参数类型  | 必填 | 描述 |
 | ------------- |----|----|----|
@@ -366,13 +427,11 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
-### 3. 获取单个合约的最新成交记录
-
-    获取单个合约的最新成交记录
+## 4. 查询最新成交记录
 
 **HTTP请求**
 
-  ```http
+```http
     # Request
     GET api/v1/market/getMarketTrades
 ```
@@ -416,14 +475,47 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
-
-### 4. 获取单个资金费率历史记录
-
-    获取单个资金费率历史记录
+## 5. 查询最新资金费率
 
 **HTTP请求**
 
-  ```http
+```http
+    # Request
+    GET api/v1/market/getLatestFunding
+```
+
+**请求参数**
+
+| 参数名  | 参数类型  | 必填 | 字段描述 | 描述 |
+| -------|--------|--- |-------|------|
+| symbol | String | 是 |合约名称| 合约名称后面需要加下划线(BTC-USDT) |
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| fundingRate   | float64 |    | 当前资金费率 |
+| fairPrice     | float64 |    | 当前的标记价格 |
+| leftSeconds   | float64 |    | 下次结算剩余时间，单位为秒 |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "fundingRate": "0.3000",
+          "fairPrice": "182.90",
+          "leftSeconds": "1024",
+        }
+    }
+```
+
+## 6. 查询资金费率历史
+
+**HTTP请求**
+
+```http
     # Request
     GET api/v1/market/getHistoryFunding
 ```
@@ -472,14 +564,13 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
+## 7. 查询K线最新数据
 
-### 5. 获取最新一条K线数据
-
-    获取最新一条K线数据
+     查询最新成交价格的K线最新数据。
 
 **HTTP请求**
 
-  ```http
+```http
     # Request
     GET api/v1/market/getLatestKline
 ```
@@ -539,13 +630,13 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 ```
 
 
-### 6. 获取K线历史数据
+## 8. 查询K线历史数据
 
-    获取K线历史数据
+     查询一段时间周期内成交价格的K线历史数据。
 
 **HTTP请求**
 
-  ```http
+```http
     # Request
     GET api/v1/market/getHistoryKlines
 ```
@@ -657,93 +748,11 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
-
-### 7. 获取合约的最新价格信息
-
-    获取合约的最新价格信息
+## 9. 查询合约未平仓数量
 
 **HTTP请求**
 
-  ```http
-    # Request
-    GET api/v1/market/getLatestPrice
-```
-
-**请求参数**
-
-| 参数名  | 参数类型  | 必填 | 字段描述 | 描述 |
-| -------|--------|--- |-------|------|
-| symbol | String | 是 |合约名称| 合约名称后面需要加下划线(BTC-USDT) |
-
-**返回值说明**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| tradePrice    | float64 |    | 成交价格 |
-| indexPrice    | float64 |    | 指数价格 |
-| fairPrice     | float64 |    | 标记价格 |
-
-```javascript
-# Response
-    {
-        "code": 0,
-        "msg": "",
-        "data": {
-          "tradePrice": "50000.18",
-          "indexPrice": "50000.18",
-          "fairPrice": "50000.18"
-        }
-    }
-```
-
-
-### 8. 获取合约当前最新的资金费率
-
-    获取合约当前最新的资金费率
-
-**HTTP请求**
-
-  ```http
-    # Request
-    GET api/v1/market/getLatestFunding
-```
-
-**请求参数**
-
-| 参数名  | 参数类型  | 必填 | 字段描述 | 描述 |
-| -------|--------|--- |-------|------|
-| symbol | String | 是 |合约名称| 合约名称后面需要加下划线(BTC-USDT) |
-
-**返回值说明**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| fundingRate   | float64 |    | 当前资金费率 |
-| fairPrice     | float64 |    | 当前的标记价格 |
-| leftSeconds   | float64 |    | 下次结算剩余时间，单位为秒 |
-
-```javascript
-# Response
-    {
-        "code": 0,
-        "msg": "",
-        "data": {
-          "fundingRate": "0.3000",
-          "fairPrice": "182.90",
-          "leftSeconds": "1024",
-        }
-    }
-```
-
-
-
-### 9. 查询合约未平仓数量
-
-    查询合约未平仓数量
-
-**HTTP请求**
-
-  ```http
+```http
     # Request
     GET api/v1/market/getOpenPositions
 ```
@@ -773,22 +782,166 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
+# 账户接口
 
-## 交易API
+## 1. 查询账户信息
 
+    查询当前账户下专业合约资产的相关信息。
 
-### 1. 下单交易接口
+**HTTP请求**
+             
+```http
+    # Request
+    POST api/v1/user/getBalance
+```
 
-     下单交易
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 |字段描述 |描述 |
+| ------------- |----|----|---|---- |
+| apiKey | String | 是 | 接口秘钥 | |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 | |
+| currency  | String | 是  | 合约资产 | |
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| code           | Int64   | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg            | String  | 是 | 错误信息提示 |
+| userId           | String | 是 | 用户ID |
+| currency       | String | 是 | 用户资产 |
+| balance        | Float64 | 是 | 资产余额 |
+| equity         | Float64 | 是 | 资产净值 |
+| unrealisedPNL  | Float64 | 是 | 未实现盈亏 |
+| realisedPNL    | Float64 | 是 | 已实现盈亏 |
+| availableMargin| Float64 | 是 | 可用保证金 |
+| usedMargin     | Float64 | 是 | 已用保证金 |
+| freezedMargin  | Float64 | 是 | 冻结保证金 |
+| longLeverage   | Float64 | 是 | 做多杠杆 |
+| shortLeverage  | Float64 | 是 | 做空杠杆 |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+            "userId": "123",
+            "currency": "USDT",
+            "balance": 123.33,
+            "equity": 128.99,
+            "unrealisedPNL": 1.22,
+            "realisedPNL": 8.1,
+            "availableMargin": 123.33,
+            "usedMargin": 2.2,
+            "freezedMargin": 3.3,
+            "longLeverage": 10,
+            "shortLeverage": 10,
+        }
+    }
+```
+
+## 2. 查询持仓信息
+
+    查询当前账户下专业合约的持仓信息与盈亏情况。
 
 **HTTP请求**
 
-     
-           
+```http
+    # Request
+    POST api/v1/user/getPositions
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**  
+
+| 参数名 | 参数类型  | 必填 | 字段描述
+| ------------- |----|----|----|
+| symbol | String | 是 |  合约产品(BTC-USDT)，为空则表示全部都返回 |
+| apiKey | String | 是 |  |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| code           | Int64   | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg            | String  | 是 | 错误信息提示 |
+| symbol         | String  | 是 | 合约品种 |
+| currency       | String  | 是 | 资产类型 |
+| positionId     | String  | 是 | 仓位ID  |
+| positionSide   | String  | 是 | 仓位方向 Long/Short 多/空 |
+| marginMode     | String  | 是 | 保证金模式 Cross/Isolated 全仓/逐仓  |
+| volume         | Float64 | 是 | 持仓数量 |
+| availableVolume| Float64 | 是 | 可平仓数量 |
+| unrealisedPNL  | Float64 | 是 | 未实现盈亏 |
+| realisedPNL    | Float64 | 是 | 已实现盈亏 |
+| margin         | Float64 | 是 | 保证金 |
+| avgPrice       | Float64 | 是 | 开仓均价 |
+| liquidatedPrice| Float64 | 是 | 预估强平价 |
+| leverage       | Float64 | 是 | 杠杆 |
+
+```javascript
+
+# Response
+    {
+       "code": 0,
+       "msg": "",
+       "data": {
+            "positions": [
+                {
+                    "symbol": "BTC-USDT",
+                    "positionId": "12345678",
+                    "currency": "USDT",
+                    "positionSide": "Long",
+                    "marginMode": "Cross",
+                    "volume": 123.33,
+                    "availableVolume": 128.99,
+                    "unrealisedPNL": 1.22,
+                    "realisedPNL": 8.1,
+                    "margin": 123.33,
+                    "avgPrice": 2.2,
+                    "liquidatedPrice": 2.2,
+                    "leverage": 10,
+                },
+                {
+                    "symbol": "ETH-USDT",
+                    "currency": "USDT",
+                    "positionSide": "Short",
+                    "marginMode": "Isolated",
+                    "volume": 123.33,
+                    "availableVolume": 128.99,
+                    "unrealisedPNL": 1.22,
+                    "realisedPNL": 8.1,
+                    "margin": 123.33,
+                    "avgPrice": 2.2,
+                    "liquidatedPrice": 2.2,
+                    "leverage": 10,
+                },
+            ]
+        }
+    }
+```
+
+# 交易API
+
+## 1. 交易下单
+
+**HTTP请求**
+
 ```http
     # Request
     POST api/v1/user/trade
 ```
+
 **请求方式**
 
     POST
@@ -823,16 +976,94 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
+## 2. 一键平仓下单
 
+    查询持仓信息后，可根据仓位ID进行一键平仓操作。注意，一键平仓是以市价委托进行触发的。
 
-### 2. 撤销订单
- 
-       撤销订单  
+**HTTP请求**
+
+```http
+    # Request
+    POST api/v1/user/oneClickClosePosition
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| symbol     | String | 是 | 合约符号(BTC-USDT) |
+| positionId | Int64  | 是 | 一键平仓对应的仓位ID |
+| apiKey     | String | 是 | 接口密钥 |
+| timestamp  | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| code    | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg     | String | 是 | 错误信息提示 |
+| orderId | String | 是 | 一键平仓产生的委托订单ID |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+## 3. 全部一键平仓下单
+
+    将当前账户下所有仓位进行一键平仓操作。注意，一键平仓是以市价委托进行触发的。
+
+**HTTP请求**
+
+```http
+    # Request
+    POST api/v1/user/oneClickCloseAllPositions
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| symbol    | String | 是 | 合约符号(BTC-USDT) |
+| apiKey | String | 是 | 接口密钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| code    | Int64      | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg     | String     | 是 | 错误信息提示 |
+| orders  | String数组  | 是 | 全部一键平仓产生的多个委托订单ID |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "orders": ["123", "456", "789"]
+        }
+    }
+```
+
+## 4. 撤销订单
+
+    将处于当前委托状态的订单进行撤销操作。
 
 **HTTP请求**
  
-   
-   
 ```http
     # Request
     POST api/v1/user/cancelOrder
@@ -856,7 +1087,6 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | ---- |---- | ---- | ---- |
 | orderId | String | 是 | 订单ID |
 
-
 ```javascript
 # Response
     {
@@ -868,10 +1098,87 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
+## 5. 批量撤销订单
 
-### 3. 查询委托中的订单
+    将合约下处于当前委托状态的全部订单进行撤销操作。
 
-    查询委托中的订单
+**HTTP请求**
+
+```http
+    # Request
+    POST api/v1/user/batchCancelOrders
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| symbol    | String | 是 | 合约符号(BTC-USDT) |
+| apiKey | String | 是 | 接口密钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| code    | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg     | String | 是 | 错误信息提示 |
+
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+## 6. 撤销全部订单
+
+    将账户下处于当前委托状态的全部订单进行撤销操作。
+
+**HTTP请求**
+
+```http
+    # Request
+    POST api/v1/user/cancelAll
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| apiKey | String | 是 | 接口密钥 |
+| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ---- |---- | ---- | ---- |
+| code | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
+| msg  | String | 是 | 错误信息提示 |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+## 7. 查询当前委托订单
+
+    查询一段时间周期内账户下处于当前委托状态的订单详情。
 
 **HTTP请求**
 
@@ -906,8 +1213,7 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | filledVolume  | Float64 | 是 | 成交数量 |
 | orderId       | String  | 是 | 订单号 |
 
- ```javascript
-
+```javascript
 # Response
     {
        "code": 0,
@@ -943,16 +1249,16 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
  ```
 
-  
-### 4. 查询单个订单的详情信息
-   
-    查询单个订单的详情信息
+## 8. 查询订单详情
 
+   
 **HTTP请求**
-   ```http
+
+```http
     # Request
     POST api/v1/user/queryOrderStatus
 ```
+
 **请求方式**
 
     POST
@@ -1011,318 +1317,9 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
-### 5. 获取用户账户资产信息
+## 9. 切换全仓/逐仓
 
-    获取用户账户资产信息
-          
-**HTTP请求**
-             
-    ```http
-        # Request
-        POST api/v1/user/getBalance
-    ```
-**请求方式**
-        POST
-
-**请求参数**
-
-| 参数名 | 参数类型  | 必填 |字段描述 |描述 |
-| ------------- |----|----|---|---- |
-| apiKey | String | 是 | 接口秘钥 | |
-| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 | |
-| currency  | String | 是  | 合约资产 | |
-
-**返回值说明**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| code           | Int64   | 是 | 错误码，0表示成功，不为0表示异常失败 |
-| msg            | String  | 是 | 错误信息提示 |
-| userId	       | String | 是 | 用户ID |
-| currency       | String | 是 | 用户资产 |
-| balance        | Float64 | 是 | 资产余额 |
-| equity         | Float64 | 是 | 资产净值 |
-| unrealisedPNL  | Float64 | 是 | 未实现盈亏 |
-| realisedPNL    | Float64 | 是 | 已实现盈亏 |
-| availableMargin| Float64 | 是 | 可用保证金 |
-| usedMargin     | Float64 | 是 | 已用保证金 |
-| freezedMargin  | Float64 | 是 | 冻结保证金 |
-| longLeverage   | Float64 | 是 | 做多杠杆 |
-| shortLeverage  | Float64 | 是 | 做空杠杆 |
-
-```javascript
-# Response
-    {
-        "code": 0,
-        "msg": "",
-        "data": {
-            "userId": "123",
-            "currency": "USDT",
-            "balance": 123.33,
-            "equity": 128.99,
-            "unrealisedPNL": 1.22,
-            "realisedPNL": 8.1,
-            "availableMargin": 123.33,
-            "usedMargin": 2.2,
-            "freezedMargin": 3.3,
-            "longLeverage": 10,
-            "shortLeverage": 10,
-        }
-    }
-```
-
-### 6. 查询用户持仓信息
-
-    查询用户持仓信息
-
-**HTTP请求**
-
-```http
-    # Request
-    POST api/v1/user/getPositions
-```
-
-**请求方式**
-
-    POST
-
-**请求参数**  
-
-| 参数名 | 参数类型  | 必填 | 字段描述
-| ------------- |----|----|----|
-| symbol | String | 是 |  合约产品(BTC-USDT)，为空则表示全部都返回 |
-| apiKey | String | 是 |  |
-| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
-
-**返回值说明**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| code           | Int64   | 是 | 错误码，0表示成功，不为0表示异常失败 |
-| msg            | String  | 是 | 错误信息提示 |
-| symbol         | String  | 是 | 合约品种 |
-| currency       | String  | 是 | 用户资产 |
-| positionSide   | String  | 是 | 仓位方向 Long/Short 多/空 |
-| marginMode     | String  | 是 | 保证金模式 Cross/Isolated 全仓/逐仓  |
-| volume         | Float64 | 是 | 持仓数量 |
-| availableVolume| Float64 | 是 | 可平仓数量 |
-| unrealisedPNL  | Float64 | 是 | 未实现盈亏 |
-| realisedPNL    | Float64 | 是 | 已实现盈亏 |
-| margin         | Float64 | 是 | 保证金 |
-| avgPrice       | Float64 | 是 | 开仓均价 |
-| liquidatedPrice| Float64 | 是 | 预估强平价 |
-| leverage       | Float64 | 是 | 杠杆 |
-
-```javascript
-
-# Response
-    {
-       "code": 0,
-       "msg": "",
-       "data": {
-            "positions": [
-                {
-                    "symbol": "BTC-USDT",
-                    "currency": "USDT",
-                    "positionSide": "Long",
-                    "marginMode": "Cross",
-                    "volume": 123.33,
-                    "availableVolume": 128.99,
-                    "unrealisedPNL": 1.22,
-                    "realisedPNL": 8.1,
-                    "margin": 123.33,
-                    "avgPrice": 2.2,
-                    "liquidatedPrice": 2.2,
-                    "leverage": 10,
-                },
-                {
-                    "symbol": "ETH-USDT",
-                    "currency": "USDT",
-                    "positionSide": "Short",
-                    "marginMode": "Isolated",
-                    "volume": 123.33,
-                    "availableVolume": 128.99,
-                    "unrealisedPNL": 1.22,
-                    "realisedPNL": 8.1,
-                    "margin": 123.33,
-                    "avgPrice": 2.2,
-                    "liquidatedPrice": 2.2,
-                    "leverage": 10,
-                },
-            ]
-        }
-    }
-```
-
-### 7. 批量撤销订单
-
-  批量撤销订单
-
-**HTTP请求**
-
-
-```http
-    # Request
-    POST api/v1/user/batchCancelOrders
-```
-
-**请求方式**
-
-    POST
-
-**请求参数**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| symbol    | String | 是 | 合约符号(BTC-USDT) |
-| apiKey | String | 是 | 接口密钥 |
-| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
-
-**返回值说明**
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ---- |---- | ---- | ---- |
-| code    | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
-| msg     | String | 是 | 错误信息提示 |
-
-
-```javascript
-# Response
-    {
-        "code": 0,
-        "msg": "",
-        "data": {
-        }
-    }
-```
-
-### 8. 一键平仓下单
-
-  一键平仓下单
-
-**HTTP请求**
-
-
-```http
-    # Request
-    POST api/v1/user/oneClickClosePosition
-```
-
-**请求方式**
-
-    POST
-
-**请求参数**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| symbol     | String | 是 | 合约符号(BTC-USDT) |
-| positionId | Int64  | 是 | 一键平仓对应的仓位ID |
-| apiKey     | String | 是 | 接口密钥 |
-| timestamp  | String | 是 | 发起请求的时间戳，单位为毫秒 |
-
-**返回值说明**
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ---- |---- | ---- | ---- |
-| code    | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
-| msg     | String | 是 | 错误信息提示 |
-| orderId | String | 是 | 一键平仓产生的委托订单ID |
-
-```javascript
-# Response
-    {
-        "code": 0,
-        "msg": "",
-        "data": {
-        }
-    }
-```
-
-
-### 9. 全部一键平仓下单
-
-  全部一键平仓下单
-
-**HTTP请求**
-
-
-```http
-    # Request
-    POST api/v1/user/oneClickCloseAllPositions
-```
-
-**请求方式**
-
-    POST
-
-**请求参数**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| symbol    | String | 是 | 合约符号(BTC-USDT) |
-| apiKey | String | 是 | 接口密钥 |
-| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
-
-**返回值说明**
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ---- |---- | ---- | ---- |
-| code    | Int64      | 是 | 错误码，0表示成功，不为0表示异常失败 |
-| msg     | String     | 是 | 错误信息提示 |
-| orders  | String数组  | 是 | 全部一键平仓产生的多个委托订单ID |
-
-```javascript
-# Response
-    {
-        "code": 0,
-        "msg": "",
-        "data": {
-          "orders": ["123", "456", "789"]
-        }
-    }
-```
-
-### 10. 撤销全部订单
-
-  撤销全部订单
-
-**HTTP请求**
-
-
-```http
-    # Request
-    POST api/v1/user/cancelAll
-```
-
-**请求方式**
-
-    POST
-
-**请求参数**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| apiKey | String | 是 | 接口密钥 |
-| timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
-
-**返回值说明**
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ---- |---- | ---- | ---- |
-| code | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
-| msg  | String | 是 | 错误信息提示 |
-
-```javascript
-# Response
-    {
-        "code": 0,
-        "msg": "",
-        "data": {
-        }
-    }
-```
-
-
-### 11. 修改账户保证金模式
-
-  修改账户保证金模式
+  修改专业合约账户的保证金模式，全仓模式或逐仓模式。
 
 **HTTP请求**
 
@@ -1362,12 +1359,11 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
-### 12. 修改杠杆
+## 10. 修改杠杆
 
-  修改杠杆
+    调整合约多仓或空仓的杠杆倍数。
 
 **HTTP请求**
-
 
 ```http
     # Request
@@ -1405,44 +1401,6 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
-## 基础信息API
-
-### 1. 获取系统时间
-
-    获取系统时间
-
-**HTTP请求**
-
-```http
-    # Request
-    POST api/v1/common/server/time
-```
-
-**请求方式**
-
-    GET / POST
-
-
-**请求参数**
-
-    无
-
-**返回值说明**
-
-| 参数名 | 参数类型  | 必填 | 描述 |
-| ------------- |----|----|----|
-| code        | Int64  | 是 | 错误码，0表示成功，不为0表示异常失败 |
-| msg         | String | 是 | 错误信息提示 |
-| currentTime | Int64  | 是 | 系统当前时间，单位毫秒 |
-
-```javascript
-    # Response
-    {
-        "code": 0,
-        "msg": "",
-        "currentTime": 1534431933321
-    }
-```
 
 **备注**
     
