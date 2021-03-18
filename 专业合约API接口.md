@@ -1118,14 +1118,21 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | 参数名 | 参数类型  | 必填 | 描述 |
 | ------------- |----|----|----|
 | symbol    | String | 是 | 合约名称中需有"-"，如BTC-USDT |
-| apiKey | String | 是 | 接口密钥 |
+| oids      | String | 是 | 订单ID列表，多个订单id用逗号进行分隔 |
+| apiKey    | String | 是 | 接口密钥 |
 | timestamp | String | 是 | 发起请求的时间戳，单位为毫秒 |
 
 **返回值说明**
 | 参数名 | 参数类型  | 描述 |
 | ---- |---- | ---- |
-| code    | Int64  | 错误码，0表示成功，不为0表示异常失败 |
-| msg     | String | 错误信息提示 |
+| code          | Int64  | 错误码，0表示成功，不为0表示异常失败 |
+| msg           | String | 错误信息提示 |
+| Success       | String数组 | 撤销成功的订单ID列表 |
+| Failed        | 结构数组 | 撤销失败的订单列表 |
+| orderId       | String | 订单ID |
+| errorCode     | Int64  | 错误码，0表示成功，不为0表示异常失败 |
+| errorMessage  | String | 错误信息提示 |
+
 
 
 ```javascript
@@ -1134,6 +1141,14 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
         "code": 0,
         "msg": "",
         "data": {
+          "success": ["725970815","725970736"],
+          "failed":[
+            {
+              "orderId": "725971356",
+              "errorCode": 80012,
+              "errorMessage": "Service network failed"
+            },
+          ],
         }
     }
 ```
