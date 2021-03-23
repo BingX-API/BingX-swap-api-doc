@@ -6,41 +6,41 @@ Bingbon Developer Documentation ([English Docs][])
 
 - [Introduction](#Introduction)
 - [Authentication](#Authentication)
-    - [Generate an API Key](#Generate an api-key)
-    - [Make Requests](#Make Requests)
+    - [Generate an API Key](#generate-an-api-key)
+    - [Make Requests](#make-requests)
     - [Signature](#Signature)
     - [Requests](#Requests)
 - [Basic Information](#Basic Information)
-    - [Common Error Codes](#Common Error Codes)
+    - [Common Error Codes](#common-error-codes)
     - [Timestamp](#Timestamp)
     - [Numbers](#Numbers)
-    - [Rate Limits](#Rate Limits)
+    - [Rate Limits](#rate-limits)
         - [REST API](#rest-api)
-    - [Get Server Time](#Get Server Time)
-- [Market Interface](#Market Interface)
-    - [Contract Information](#Contract Information)
-    - [Get Latest Price of a Trading Pair](#Get Latest Price of a Trading Pair)
-    - [Get Market Depth](#Get Market Depth)
-    - [The latest Trade of a Trading Pair](#The latest Trade of a Trading Pair)
-    - [Current Funding Rate](#Current Funding Rate)
-    - [Funding Rate History](#Funding Rate History)
-    - [Get K-Line Data](#Get K-Line Data)
-    - [K-Line Data History](#K-Line Data History)
-    - [Get Swap Open Positions](#Get Swap Open Positions)
-- [Account Interface](#Account Interface)
-    - [Get Perpetual Swap Account Asset Information](#Get Perpetual Swap Account Asset Information)
-    - [Perpetual Swap Positions](#Perpetual Swap Positions)
-- [Trade Interface](#Trade Interface)
-    - [Place a New Order](#Place a New Order)
-    - [One-Click Close Position](#One-Click Close Position)
-    - [One-Click Close All Positions](#One-Click Close All Positions)
-    - [Cancel an Order](#Cancel an Order)
-    - [Cancel a Batch of Orders](#Cancel a Batch of Orders)
-    - [Cancel All Orders](#Cancel All Orders )
-    - [Unfilled Order Acquisition](#Unfilled Order Acquisition)
-    - [Get Order Details](#Get Order Details) 
-    - [Switch Margin Mode](#Switch Margin Mode) 
-    - [Switch Leverage](#Switch Leverage)
+    - [Get Server Time](#get-server-time)
+- [Market Interface](#market-interface)
+    - [Contract Information](#1.-contract-information)
+    - [Get Latest Price of a Trading Pair](#2.-get-latest-price-of-a-trading-pair)
+    - [Get Market Depth](#3.-get-market-depth)
+    - [The latest Trade of a Trading Pair](#4.-the-latest-trade-of-a-trading-pair)
+    - [Current Funding Rate](#5.-current-funding-rate)
+    - [Funding Rate History](#6.-funding-rate-history)
+    - [Get K-Line Data](#7.-get-k-line-data)
+    - [K-Line Data History](#8.-k-line-data-history)
+    - [Get Swap Open Positions](#9.-get-swap-open-positions)
+- [Account Interface](#account-interface)
+    - [Get Perpetual Swap Account Asset Information](#1.**-get-perpetual-swap-account-asset-information)
+    - [Perpetual Swap Positions](#2.**-perpetual-swap-positions)
+- [Trade Interface](#trade-interface)
+    - [Place a New Order](#1.-place-a-new-order)
+    - [One-Click Close Position](#2.-one-click-close-position)
+    - [One-Click Close All Positions](#3.-one-click-close-all-positions)
+    - [Cancel an Order](#4.-cancel-an-order)
+    - [Cancel a Batch of Orders](#5.-cancel-a-batch-of-orders)
+    - [Cancel All Orders](#6.-cancel-all-orders )
+    - [Unfilled Order Acquisition](#7.-unfilled-order-acquisition)
+    - [Get Order Details](#8.-get-order-details) 
+    - [Switch Margin Mode](#9.-switch-margin-mode) 
+    - [Switch Leverage](#10.-switch-leverage)
 
 <!-- /TOC -->
 
@@ -120,6 +120,8 @@ Signature = HmacSHA256(secretkey, originString)
 i.e.
 Signature = HmacSHA256("UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI", "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013")
 
+echo -n "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013" | openssl dgst -sha256 -hmac "UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI" -binary | base64 | xargs python2.7 -c 'import sys, urllib;print(urllib.quote(sys.argv[1]))'
+
 ```
 The result of the “Sign” is S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D; the url query parameter should be as follows.
 ```
@@ -130,8 +132,6 @@ sign = S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D
 
 The final API request sent to the server should be:
 "https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013&sign=S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D"
-
-echo -n "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013" | openssl dgst -sha256 -hmac "UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI" -binary | base64 | xargs python2.7 -c 'import sys, urllib;print(urllib.quote(sys.argv[1]))'
 
 ```
 

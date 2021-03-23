@@ -6,14 +6,13 @@ Official API Documentation for the Bingbon Trading Platform- Websocket
 
 - [Introduction](#Introduction)
     - [Access](#Access)
-    - [Data Compression](#Data Compression)
+    - [Data Compression](#data-compression)
     - [Heartbeats](#Heartbeats)
     - [Subscriptions](#Subscriptions)
     - [Unsubscribe](#Unsubscribe)
-- [Perpetual Swap Websocket Market Data](#Perpetual Swap Websocket Market Data Reference) 
-    
-    1. [Subscribe Market Depth Data](#Subscribe Market Depth Data)
-    2. [Subscribe the Latest Trade Detail](#Subscribe the Latest Trade Detail)
+- [Perpetual Swap Websocket Market Data](#perpetual-swap-websocket-market-data) 
+    - [Subscribe Market Depth Data](#subscribe-market-depth-data)
+    - [Subscribe the Latest Trade Detail](#subscribe-the-latest-trade-detail)
 
 <!-- /TOC -->
 
@@ -72,7 +71,7 @@ Confirmation of Unsubscription:
 
 # Perpetual Swap Websocket Market Data
 
-## 1. Subscribe Market Depth Data
+## Subscribe Market Depth Data
 
     Subscribe to the push of a certain trading pair's market depth data; this topic sends the latest market depth as a snapshot. Snapshots are sent at a frequency of once every 1 second.
 
@@ -169,7 +168,7 @@ Confirmation of Unsubscription:
 ```
 
 
-## 2. Subscribe the Latest Trade Detail
+## Subscribe the Latest Trade Detail
 
     Subscribe to the trade detail data of a trading pair
 
