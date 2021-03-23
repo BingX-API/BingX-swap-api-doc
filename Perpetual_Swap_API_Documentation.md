@@ -1,282 +1,370 @@
-Bingbon Exchange Contract Official API documentation
+Official API Documentation for the Bingbon Trading Platform
 ==================================================
-[Bingbon][]Developer documentation([English Docs][])。
+Bingbon Developer Documentation ([English Docs][])
 
 <!-- TOC -->
 
 - [Introduction](#Introduction)
-- [API interface encryption verification](#API interface encryption verification)
-    - [Generate API Key](#Generate api-key)
+- [Authentication](#Authentication)
+    - [Generate an API Key](#Generate an api-key)
     - [Make Requests](#Make Requests)
     - [Signature](#Signature)
-    - [Select Timestamp](#Select Timestamp)
-    - [Request interaction](#Request interaction)
-        - [Requests](#Requests)
-        - [Paging](#Paging)
-    - [Standard Specification](#Standard Specification)
-        - [Timestamp](#Timestamp)Timestamp
-        - [Example](#Example)
-        - [Numbers](#Numbers)
-        - [Rate Limit](#Rate Limit)
-            - [REST API](#rest-api)
-- [Perpetual Swap API Reference](#Perpetual Swap API Reference)
-    - [Perpetual Swap Market API](#Perpetual Swap Market API)
-        - [1. Get All the Information of Contract Trading Pairs](#1-Get All the Information of Contract Trading Pairs)
-        - [2. Get Trading Depths of Contract Trading Pairs](#2-Get Trading Depths of Contract Trading Pairs)
-        - [3. Get the latest transaction record of a single contract](#3-Get the latest transaction record of a single contract)
-    - [Perpetual Swap Account API](#Perpetual Swap Account API)
-        - [1. Place Orders](#1-Place Orders)
-        - [2. Cancel open orders](#2-Cancel open orders)
-        - [3. Query Pending Order](#3-Query Pending Order)
-        - [4. Query the Details of a Single Order](#4-Query the Details of a Single Order)
-        - [5. Get Information of User's Account Asset ](#5-Get Information of User's Account Asset )
-        - [6. Query User's Current Position](#6-Query User's Current Position) 
-        - [7. Get Server Time](#7-Get Server Time) 
+    - [Requests](#Requests)
+- [Basic Information](#Basic Information)
+    - [Common Error Codes](#Common Error Codes)
+    - [Timestamp](#Timestamp)
+    - [Numbers](#Numbers)
+    - [Rate Limits](#Rate Limits)
+        - [REST API](#rest-api)
+    - [Get Server Time](#Get Server Time)
+- [Market Interface](#Market Interface)
+    - [Contract Information](#Contract Information)
+    - [Get Latest Price of a Trading Pair](#Get Latest Price of a Trading Pair)
+    - [Get Market Depth](#Get Market Depth)
+    - [The latest Trade of a Trading Pair](#The latest Trade of a Trading Pair)
+    - [Current Funding Rate](#Current Funding Rate)
+    - [Funding Rate History](#Funding Rate History)
+    - [Get K-Line Data](#Get K-Line Data)
+    - [K-Line Data History](#K-Line Data History)
+    - [Get Swap Open Positions](#Get Swap Open Positions)
+- [Account Interface](#Account Interface)
+    - [Get Perpetual Swap Account Asset Information](#Get Perpetual Swap Account Asset Information)
+    - [Perpetual Swap Positions](#Perpetual Swap Positions)
+- [Trade Interface](#Trade Interface)
+    - [Place a New Order](#Place a New Order)
+    - [One-Click Close Position](#One-Click Close Position)
+    - [One-Click Close All Positions](#One-Click Close All Positions)
+    - [Cancel an Order](#Cancel an Order)
+    - [Cancel a Batch of Orders](#Cancel a Batch of Orders)
+    - [Cancel All Orders](#Cancel All Orders )
+    - [Unfilled Order Acquisition](#Unfilled Order Acquisition)
+    - [Get Order Details](#Get Order Details) 
+    - [Switch Margin Mode](#Switch Margin Mode) 
+    - [Switch Leverage](#Switch Leverage)
 
 <!-- /TOC -->
 
 # Introduction
 
-Welcome to Use [Bingbon][] Development Document
-
-This document provides an introduction to the use of related APIs such as account management, market query, and trading functions for Perpetual Swap Service.
-The market API provides an open quotation data endpoints of the market. Account/Trades APIs require identity verification, which provide functions such as placing orders, canceling orders, and querying orders and account information.
+Welcome to the [Bingbon][] API. You can use our API to access market data, trading, and account management endpoints of Perpetual Swap. The market data API is publicly accessible and provides market data such as The Latest Trade of a Trading Pair. The account and trading APIs require authentication with an API Key which allows you to place and cancel orders and enquire order status and account info.
 
 
-# API Interface Encryption Verification
-## Generate API Key
+# **Authentication**
+## Generate an API Key
 
-Before signing any request, you must create an API key through the Bingbon website [User Center]-[API]. After creating the key, you will get 2 pieces of information that must be remembered:
+Before being able to sign any requests, you must create an API Key at the API Management page on Bingbon. Upon creating a key you will have 2 pieces of information which you should remember:
 * API Key
 * Secret Key
 
 
-API Key and Secret Key will be randomly generated and provided.
+The API Key and Secret Key will be randomly generated and provided by Bingbon.
 
 ## Make Requests
 
-All REST requests must contain the following parameters:
+All private REST requests must contain the following parameters:
 * API Key -  as a string
-* sign - A signature obtained by using a certain algorithm (signature information for reference).
-* timestamp - As the timestamp of your request.
-* All requests should contain application/json type content and be valid JSON.
+* Sign - a signature computed based on HMAC SHA256 (see Signature subsection for details).
+* Timestamp - the timestamp of your request.
+* Request bodies are expected to have content type application/json and are in valid JSON format.
 
-## signature
-sign parameter is obtained by encrypting the specific string using the **HMAC SHA256** method.The specific string is obtained after sorting all parameters (including timestamp) according to the dictionary,like key1=value1 + key2=value2 ... + Secret Key.(+ means string concatenation).
+## Signature
+A “sign” is generated by encrypting the http method, url path, request parameters, etc. concatenated by string based on HMAC SHA256.
 
-* method is the request method (POST/GET/PUT/DELETE) with all uppercase letters.
+* ”Path“ is the request path of URL, e.g. /api/v1/user/getBalance.
+* The request "method" should be UPPER CASE, i.e. GET, POST, PUT and DELETE.
+* All “parameters” (including timestamp) are sorted lexicographically as a specific string *key1=value1 + key2=value2 ... + Secret Key*. (“+” means connection between 2 strings)
 
+originString = method + path + params 
 
-**For example: Sign the following request parameters**
+sign = HmacSHA256 (originString)
+
+**Example: “Sign” the following request**
 
 ```bash
 curl "https://api-swap-rest.bingbon.pro/api/v1/user/getBalance"
       
 ```
-* Get the balance information of a user's asset. Take apiKey=bingbonOneUser123, secretKey=bingbonSecondUser456 As an example
+* “getBalance” refers to Get user's Perpetual Swap Account Asset Information in terms of "POST" requests. Take apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU, secretKey=UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI as an example.
 ```
-timestamp = 1540286290170
-apiKey = bingbonOneUser123
-currency = BTC
-```
-
-After the parameters are sorted by dictionary,the result is as follows
-```
-apiKey = bingbonOneUser123
-currency = BTC
-timestamp = 1540286290170
+timestamp = 1616488398013
+apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
+currency = USDT
 ```
 
-Generate a string to be signed
+The parameters are as follows based on lexicographical sorting.
+```
+apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
+currency = USDT
+timestamp = 1616488398013
+```
+
+The request method is "POST"; the path is /api/v1/user/getBalance; accordingly a string to be signed is generated as
 
 ```
-originString = 'apiKey=bingbonOneUser123&currency=BTC&timestamp=1540286290170'
+paramString = 'apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013'
   
 ```
 
-Then, add the private key parameter to the string to be signed to generate the final string to be signed.
+Further generate the string to be signed by algorithm as
+
+```
+originString = 'POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013'
+```
+
+Then, add the Secret Key to the string above to generate the final string.
 
 
 E.g:
 ```
 Signature = HmacSHA256(secretkey, originString)
-
-Signature = HmacSHA256("bingbonSecondUser456", "apiKey=bingbonOneUser123&currency=BTC&timestamp=1540286290170")
+i.e.
+Signature = HmacSHA256("UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI", "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013")
 
 ```
-If the result of Signature is bingbonHashxxxxyyyyzzzz, the url query parameter after the signature is as follows
+The result of the “Sign” is S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D; the url query parameter should be as follows.
 ```
-apiKey = ABC
-currency = BTC
-timestamp = 1540286290170
-sign = aabbbbccccffffeeeeffff
+apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
+currency = USDT
+timestamp = 1616488398013
+sign = S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D
 
-That is, the final API request sent to the server should be:
-"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=bingbonOneUser123&currency=BTC&timestamp=1540286290170&sign=bingbonHashxxxxyyyyzzzz"
+The final API request sent to the server should be:
+"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013&sign=S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D"
+
+echo -n "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013" | openssl dgst -sha256 -hmac "UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI" -binary | base64 | xargs python2.7 -c 'import sys, urllib;print(urllib.quote(sys.argv[1]))'
+
 ```
 
-## Request interaction
+## Requests
 
 Root URL for REST access：`https://api-swap-rest.bingbon.pro` 
 
-### Request 
+All requests are HTTPS-based. The Content-Type in the request header should be set as “application/json”.
 
-All requests are based on the HTTPS protocol, and the Content-Type in the request header information needs to be uniformly set to:'application/json'.
+**Request Description**
 
-**Request Interaction Description**
+1、Request Parameters: Encapsulate the request parameters according to the parameter requirements of the specific endpoint request.
 
-1、Request Parameters: encapsulate parameters according to the interface request parameters.
+2、Submit Request Parameters: Submit the encapsulated request parameters to the server via POST/GET/DELETE, etc.
 
-2、Submit Request Parameters: submit the encapsulated request parameters to the server through POST/GET/DELETE, etc.
+3、Server Response: The server first performs parameter security verification on the user request data. When the verification is completed, the response data will be returned to the user in JSON format according to the service logic.
 
-3、Server Response: The server first performs parameter security verification on the user request data, and returns the response data to the user in JSON format according to the business logic after the verification
-
-4、Data Processing: processing the server response data.
+4、Data Processing: Process the response data from the server.
 
 **Success**
 
-HTTP status code 200 indicates a successful response and may contain content. If the response contains content, it will be displayed in the corresponding return content.
+A successful response is indicated by HTTP status code 200 and may optionally contain a body. If the response has a body, it will be included under each resource below.
+
+# **Basic Information**
+
+## Common Error Codes
 
 **Common HTTP Error Codes**
 
-* 4XX error codes are used to indicate wrong request content, behavior, format.
+###Types
 
-* 5XX error codes are used to indicate problems on the Bingbon service.
+* 4XX error codes are used to indicate wrong request content, behavior, format.
+* 5XX error codes are used to indicate problems with the Bingbon service.
+
+###Error Codes
 
 * 400 Bad Request – Invalid request format 
-
 * 401 Unauthorized – Invalid API Key 
-
 * 403 Forbidden – You do not have access to the requested resource
-
 * 404 Not Found 
-
 * 429 Too Many Requests - Return code is used when breaking a request rate limit.
-
 * 418 return code is used when an IP has been auto-banned for continuing to send requests after receiving 429 codes.
-
 * 500 Internal Server Error – We had a problem with our server
+* 504 return code means that the API server has submitted a request to the service center but failed to get a response. It should be noted that the 504 return code does not mean that the request failed. It refers to an unknown status. The request may have been executed, or it may have failed. Further confirmation is required.
 
-* 504 return code means that the API server has submitted a request to the business core but failed to get a response. It should be noted that the 504 return code does not mean that the request failed, but is unknown. It may have been executed, or it may fail, and further confirmation is required.
+###Notes:
 
-* If it fails, the response body will contain an error description
+* If it fails, there will be an error description included in the response body.
+* Errors may be thrown from every interface.
 
-* Every interface may throw exceptions
+## Timestamp
 
+Unless otherwise specified, all timestamps from the API are returned with microseconds resolution.
 
-## Standard Specification
-
-### Timestamp
-
-Unless otherwise specified, all timestamps in the API are returned in microseconds.
-
-The timestamp of the request must be within 30 seconds of the API service time, otherwise the request will be considered expired and rejected. If there is a large deviation between the local server time and the API server time, we recommend that you update the HTTP header by querying the API server time.
+Requests that have a 30+ second difference between the timestamp and the API service time will be considered expired or rejected. We recommend using the time endpoint to query for the API server time if you believe there may be time skew between your server and the API servers.
 
 ### Example
 
 1587091154123
 
-### Numbers
+## Numbers
 
-In order to maintain the integrity of precision across platforms, decimal numbers are returned as strings. It is recommended that you also convert numbers to strings when making a request to avoid truncation and precision errors.
+Decimal numbers are returned as "Strings" in order to preserve full precision. It is recommended that the numbers are converted to "Strings" to avoid truncation and precision loss.
 
-Integers (such as transaction number and sequence) are used without quotation marks.
+Integer numbers (such as trade ID and sequences) are unquoted.
 
-### Rate Limit
+## Rate Limits
 
-If the requests are too frequent, the system will automatically limit the requests.
+To prevent abuse, Bingbon imposes rate limits on incoming requests. When a rate limit is exceeded, the system will automatically limit the requests.
 
-##### REST API
+### REST API
 
-* Market Interface：We restrict the call of the public interface by IP, up to 10 requests per 1 second.
+* Market Interface is the public interface. The rate limit of public interfaces is 10 requests every 1 second at most for each IP.
+* Account Interface and Transaction Interface are private interfaces. Generally, the private interface rate limit is at most 10 requests every 1 second for each UID.
+* The specific rate limits are indicated in the documentation for some endpoints.
 
-* Account and Transaction Interface: We restrict the call of the private interface by user ID, up to 10 requests per 1 second.
+## Get Server Time
 
-* The special restrictions of some interfaces are indicated on the specific interface
+**HTTP Requests**
 
-# Perpetual Swap API Reference
+  ```http
+        # Request
+        POST api/v1/common/server/time
+  ```
 
-## Perpetual Swap Market API
+**Request Method**
 
-### 1. Get All the Information of Contract Trading Pairs
+    GET / POST
 
-**HTTP Request**
+**Request Parameters**
 
-```http
-    # Request
-    GET api/v1/getAllContracts
-    
-    example： https://api-swap-rest.bingbon.pro/api/v1/market/getAllContracts
-```
+    null   
+
+**Return Parameters**
+
+| Field       | Type   | Description                                                  |
+| ----------- | ------ | ------------------------------------------------------------ |
+| code        | Int64  | error code, 0 means successfully response, others means response failure |
+| msg         | String | Error Details Description                                    |
+| currentTime | Int64  | The current time of the system，unit: ms                     |
+
 ```javascript
-    # Response
+# Response
     {
         "code": 0,
         "msg": "",
-        "data": [{
-            "contractId": "100",
-            "symbol": "BTC-USDT",
-            "name": "BTC合约",
-            "size": "0.0001",
-            "volumePrecision": 0,
-            "pricePrecision": 2,
-            "feeRate": 0.001,
-            "tradeMinLimit": 1,
-            "currency": "USDT",
-            "asset": "BTC"
-        }, {
-            "contractId": "101",
-            "symbol": "ETH_USDT",
-            "name": "ETH合约",
-            "size": "0.01",
-            "volumePrecision": 0,
-            "pricePrecision": 2,
-            "feeRate": 0.001,
-            "tradeMinLimit": 1,
-            "currency": "USDT",
-            "asset": "ETH"
-        }],
-        ...
-   } 
+        "currentTime": 1534431933321
+    }
 ```
+# Market Interface
+
+## 1. Contract Information
+
+**HTTP Requests**
+
+```http
+    # Request
+    GET api/v1/market/getAllContracts
+    
+    example： https://api-swap-rest.bingbon.pro/api/v1/market/getAllContracts   
+```
+**Return Parameters**  
 
 
-
-**Return Value Description**  
-
-
-| Return Field | Description |
+| Field | Description |
 | ---------- |:-------:|
 | code       | For error messages, 0 means normal |
 | msg        | Error message description |
 | contractId | ContractId |
-| symbol     | Contract symbol, returned in the form of A_B  |
-| name       | The name of contract product   |
-| size       | Contract size, for example 0.0001 BTC |
+| symbol     | Trading pair symbol, returned in the form of A_B |
+| name       | The name of the underlying index |
+| size       | Contract value, for example 0.0001 BTC |
 | volumePrecision  | The precision of trading volume  |
 | pricePrecision   | The precision of price |
 | feeRate          | Trading fees |
 | tradeMinLimit       | Minimum trading unit |
-| currency   | Margin currency assets used for settlement |
-| asset      | Contract transaction assets |
+| currency   | Settlement currency |
+| asset      | Contract denomination asset |
 
-### 2. Get Trading Depths of Contract Trading Pairs
+```javascript
+	# Response
+	{
+	    "code": 0,
+	    "msg": "",
+	    "data": [{
+	        "contractId": "100",
+	        "symbol": "BTC-USDT",
+	        "name": "BTC-USDT",
+	        "size": "0.0001",
+	        "volumePrecision": 0,
+	        "pricePrecision": 2,
+	        "feeRate": 0.001,
+	        "tradeMinLimit": 1,
+	        "currency": "USDT",
+	        "asset": "BTC"
+	    }, {
+	        "contractId": "101",
+	        "symbol": "ETH_USDT",
+	        "name": "ETH-USDT",
+	        "size": "0.01",
+	        "volumePrecision": 0,
+	        "pricePrecision": 2,
+	        "feeRate": 0.001,
+	        "tradeMinLimit": 1,
+	        "currency": "USDT",
+	        "asset": "ETH"
+	    }],
+	    ...
+	} 
+```
+## 2. Get Latest Price of a Trading Pair
 
-    Get the list of requests for the depth of the market.
+**HTTP Requests**
 
-**HTTP Request**
+  ```http
+    # Request
+    GET api/v1/market/getLatestPrice
+  ```
+
+**Request Parameters** 
+
+| Parameters | Type   | Required | Field Description   | Description                                                  |
+| ---------- | ------ | -------- | ------------------- | ------------------------------------------------------------ |
+| symbol     | String | YES      | Trading pair symbol | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+
+**Return Parameters**
+
+| Parameters | Type    | Description   |
+| ---------- | ------- | ------------- |
+| tradePrice | float64 | Trading Price |
+| indexPrice | float64 | Index Price   |
+| fairPrice  | float64 | Mark Price    |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "tradePrice": "50000.18",
+          "indexPrice": "50000.18",
+          "fairPrice": "50000.18"
+        }
+    }
+```
+
+## 3. Get Market Depth
+
+**HTTP Requests**
 
 ```http
     # Request
     GET api/v1/market/getMarketDepth
 ```
 
-**Request Parameters**  
+**Request Parameters**
 
 
-| Parameter name | Type  | Mandatory | Description |
-| ------------- |----|----|----|
-| symbol | String | YES | Trading pair symbol,like BTC-USDT |
+| Parameters | Type  | Required | Field Description | Description |
+| ------------- |----|----|----| ------------- |
+| symbol | String | YES | Trading pair symbol | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| level | String | NO | Number of levels | If it is empty, it will return 5 levels of data by default. |
+
+**Return Parameters**  
+
+| Parameters | Type    | Description                                       |
+| ---------- | ------- | ------------------------------------------------- |
+| code       | Int64   | For error messages, 0 means normal, 1 means error |
+| msg        | String  | Error message description                         |
+| asks       | array   | Sell side depth                                   |
+| bids       | array   | Buy side depth                                    |
+| p          | float64 | price                                             |
+| v          | float64 | volume                                            |
 
 
 ```javascript
@@ -285,76 +373,74 @@ If the requests are too frequent, the system will automatically limit the reques
         "code": 0,
         "msg": "",
         "data": {
-            "asks": [[
-                    "p": 5319.94,
-                    "v": 0.05483456
-                ],[
-                    "p": 5320.19,
-                    "v": 1.05734545
-                ],[
-                    "p": 5320.39,
-                    "v": 1.16307999
-                ],[
-                    "p": 5319.94,
-                    "v": 0.05483456
-                ],[
-                    "p": 5320.19,
-                    "v": 1.05734545
-                ],[
-                    "p": 5320.39,
-                    "v": 1.16307999
-                ],
+            "asks": [
+              {
+                "p": 5319.94,
+                "v": 0.05483456
+              },{
+                "p": 5320.19,
+                "v": 1.05734545
+              },{
+                "p": 5320.39,
+                "v": 1.16307999
+              },{
+                "p": 5320.94,
+                "v": 0.05483456
+              },{
+                "p": 5330.19,
+                "v": 1.05734545
+              },{
+                "p": 5330.39,
+                "v": 1.16307999
+              },
             ],
-            "bids": [[
-                    "p": 5319.94,
-                    "v": 0.05483456
-                ],[
-                    "p": 5320.19,
-                    "v": 1.05734545
-                ],[
-                    "p": 5320.39,
-                    "v": 1.16307999
-                ],[
-                    "p": 5319.94,
-                    "v": 0.05483456
-                ],[
-                    "p": 5320.19,
-                    "v": 1.05734545
-                ],[
-                    "p": 5320.39,
-                    "v": 1.16307999
-                ],
+            "bids": [
+              {
+                "p": 5319.93,
+                "v": 0.05483456
+              },{
+                "p": 5318.19,
+                "v": 1.05734545
+              },{
+                "p": 5317.39,
+                "v": 1.16307999
+              },{
+                "p": 5316.94,
+                "v": 0.05483456
+              },{
+                "p": 5315.19,
+                "v": 1.05734545
+              },{
+                "p": 5314.39,
+                "v": 1.16307999
+              },
             ],
         }
     }
 ```
-**Return Value Description**  
+## 4. The latest Trade of a Trading Pair
 
-|Return Field| Description|  
-| ------------- |----|
-| code   | For error messages, 0 means normal, 1 means error|
-| msg    |  Error message description |
-| asks   | Sell side depth |
-| bids   | Sell side depth |
-| p      | price  | float64 |
-| v      | volume | float64 |
-
-### 3. Get the latest transaction record of a single contract
-
-    Get the latest transaction record of a single contract
-
-**HTTP Request**
+**HTTP Requests**
 
   ```http
     # Request
     GET api/v1/market/getMarketTrades
-```
+  ```
 
-**Request Parameters**  
+**Request Parameters** 
 
-| Name | Type | Mandatory | Field description | Description |
+| Parameters | Type | Required | Field Description | Description |
 | -------|--------|--- |-------|------|
-| symbol | String | YES |Contract name| The contract name needs to be underlined (BTC-USDT) |
+| symbol | String | YES |Trading pair symbol| There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+
+**Return Parameters**
+
+| Parameters | Type   | Description            |
+| ---------- | ------ | ---------------------- |
+| time       | data   | Closing Time           |
+| makerSide  | String | Direction (Buy / Sell) |
+| price      | String | Closing Price          |
+| volume     | String | Filled Amount          |
 
    ```javascript
     # Response
@@ -365,13 +451,13 @@ If the requests are too frequent, the system will automatically limit the reques
             "trades": [
                 {
                     "time": "2018-04-25T15:00:51.999Z",
-                    "makerSide": "Bid",
+                    "makerSide": "Buy",
                     "price": 0.279563,
                     "volume": 100,
                 },
                 {
                     "time": "2018-04-25T15:00:51.000Z",
-                    "makerSide": "Ask",
+                    "makerSide": "Sell",
                     "price": 0.279563,
                     "volume": 300,
                 }
@@ -380,37 +466,66 @@ If the requests are too frequent, the system will automatically limit the reques
     }
    ```
 
-   **Return Value Description**  
+## 5. Current Funding Rate
 
-| Return Field | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| time      | data   |    | Closing Time |
-| makerSide | String |    | The direction of contract (Bid / Ask) |
-| price     | String |    | Closing Price |
-| volume    | String |    | Closing Amount |
+**HTTP Requests**
 
+```http
+	# Request
+	GET api/v1/market/getLatestFunding
+```
 
-  **Remark**
+**Request Parameters**
 
+| Parameters | Type   | Required | Field Description   | Description                                                  |
+| ---------- | ------ | -------- | ------------------- | ------------------------------------------------------------ |
+| symbol     | String | YES      | Trading pair symbol | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
 
-    For more return error codes, please see the error code description on the homepage
+**Return Parameters** 
 
-### 4. Get the history of single funding fee rate 
+| Parameters  | Type    | Description                                   |
+| ----------- | ------- | --------------------------------------------- |
+| fundingRate | float64 | Current Funding Rate                          |
+| fairPrice   | float64 | Current Mark Price                            |
+| leftSeconds | float64 | Time left for the next settlement, in seconds |
 
-    Get the history of single funding fee rate
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "fundingRate": "0.3000",
+          "fairPrice": "182.90",
+          "leftSeconds": "1024",
+        }
+    }
+```
 
-**HTTP Request**
+## 6. Funding Rate History 
+
+**HTTP Requests**
 
   ```http
     # Request
     GET api/v1/market/getHistoryFunding
-```
+  ```
 
 **Request Parameters**  
 
-| Name | Type | Mandatory | Field description | Description |
+| Parameters | Type | Required | Field Description | Description |
 | -------|--------|--- |-------|------|
-| symbol | String | YES |Contract name| The contract name needs to be underlined (BTC-USDT) |
+| symbol | String | YES |Trading pair symbol| There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+
+**Return Parameters** 
+
+| Parameters  | Type   | Description                                   |
+| ----------- | ------ | --------------------------------------------- |
+| historyId   | String | historyId                                     |
+| fundingRate | String | Funding rate                                  |
+| fairPrice   | String | Mark Price                                    |
+| interval    | String | The funding rate settlement cycle, unit: hour |
+| time        | data   | Settlement Time                               |
 
    ```javascript
     # Response
@@ -437,43 +552,28 @@ If the requests are too frequent, the system will automatically limit the reques
                 }
             ]
         }
-    }
+    } 
    ```
 
-   **Return Value Description** 
+## 7. Get K-Line Data
 
-| Return Field | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| historyId     | String |    | historyId |
-| fundingRate   | String |    | Funding fee rate |
-| fairPrice     | String |    | Mark Price |
-| interval      | String |    | The cycle of Funding fee rate settlement , unit: hour |
-| time          | data   |    |  Settlement Time |
+    Get the latest Kline Data
 
-
-  **Remark**
-
-    For more return error codes, please see the error code description on the homepage
-
-### 5. Get the latest Kline/Candlestick Data
-
-    Get the latest Kline/Candlestick Data
-
-**HTTP Request**
+**HTTP Requests**
 
   ```http
     # Request
     GET api/v1/market/getLatestKline
-```
+  ```
 
 **Request Parameters**  
 
-| Name | Type | Mandatory | Field description | Description |
+| Parameters | Type | Required | Field Description | Description |
 | -------|--------|--- |-------|------|
-| symbol | String | YES |Contract name| The contract name needs to be underlined (BTC-USDT) |
-| klineType | String | YES |The type of Kline| The type of Kline(minutes，hours，weeks等等) |
+| symbol | String | YES |Trading pair symbol| There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| klineType | String | YES |K-Line Type| The type of K-Line (minutes, hours, weeks etc.) |
 
-**Remark**
+**Remarks**
 
 | klineType | Field description |
 | ----------|----|
@@ -491,6 +591,17 @@ If the requests are too frequent, the system will automatically limit the reques
 | 1W        | 1W Kline |
 | 1M        | 1M Kline |
 
+**Return Parameters** 
+
+| **Parameters** | Type    | Description                       |
+| -------------- | ------- | --------------------------------- |
+| open           | float64 | Open                              |
+| close          | float64 | Close                             |
+| high           | float64 | High                              |
+| low            | float64 | Low                               |
+| volume         | float64 | Volume                            |
+| ts             | int64   | The timestamp of K-Line，Unit: ms |
+
 ```javascript
 # Response
     {
@@ -507,45 +618,31 @@ If the requests are too frequent, the system will automatically limit the reques
             }
         }
     }
-   ```
+```
 
-**Return Value Description** 
+## 8. K-Line Data History
 
-| Return Field | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| open     | float64 |    | Open |
-| close    | float64 |    | Close |
-| high     | float64 |    | High |
-| low      | float64 |    | Low |
-| volume   | float64 |    | Volume |
-| ts       | int64  |    | The timestamp of Kline，Unit: ms |
+    Get the K-Line history data of the trading price over a certain period of time.
 
-**Remark**
-   For more return error codes, please see the error code description on the homepage
-
-### 6. Get the history of K-line data
-
-    Get the history of K-line data
-
-**HTTP Request**
+**HTTP Requests**
 
   ```http
     # Request
     GET api/v1/market/getHistoryKlines
-```
+  ```
 
 **Request Parameters**  
 
-| Name | Type | Mandatory | Field description | Description |
+| **Parameters** | Type | Required | Field Description | Description |
 | -------|--------|--- |-------|------|
-| symbol | String | YES |Contract name| The contract name needs to be underlined (BTC-USDT) |
-| klineType | String | YES |The type of Kline| The type of Kline(minutes，hours，weeks等等) |
-| startTs       | int64  |    | Starting timestamp, Unit: ms |
-| endTs       | int64  |    | End timestamp, Unit: ms |
+| symbol | String | YES |Trading pair symbol| There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| klineType | String | YES |K-Line Type| The type of K-Line (minutes, hours, weeks etc.) |
+| startTs       | int64  | YES | Start timestamp, Unit: ms ||
+| endTs       | int64  | YES | End timestamp, Unit: ms ||
 
-**Remark**
+**Remarks**
 
-| klineType | Field description |
+| klineType | Field Description |
 | ----------|----|
 | 1         | 1min Kline |
 | 3         | 3min Kline |
@@ -560,6 +657,18 @@ If the requests are too frequent, the system will automatically limit the reques
 | 1D        | 1D Kline |
 | 1W        | 1W Kline |
 | 1M        | 1M Kline |
+
+**Return Parameters**
+
+| **Parameters** | Type    | Description                       |
+| -------------- | ------- | --------------------------------- |
+| klines         | array   | K-Line data                       |
+| open           | float64 | Open                              |
+| close          | float64 | Close                             |
+| high           | float64 | High                              |
+| low            | float64 | Low                               |
+| volume         | float64 | Volume                            |
+| ts             | int64   | The timestamp of K-Line, Unit: ms |
 
 ```javascript
 # Response
@@ -627,55 +736,223 @@ If the requests are too frequent, the system will automatically limit the reques
             ]
         }
     }
-   ```
+```
 
-**Return Value Description** 
+## 9. Get Swap Open Positions
 
-| Return Field | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| klines   | array     |    | Kline data | 
-| open     | float64 |    | Open |
-| close    | float64 |    | Close |
-| high     | float64 |    | High |
-| low      | float64 |    | Low |
-| volume   | float64 |    | Volume |
-| ts       | int64  |    | The timestamp of Kline，Unit: ms |
+**HTTP Requests**
 
+```http
+	# Request
+    GET api/v1/market/getOpenPositions
+```
 
-**Remark**
-     For more return error codes, please see the error code description on the homepage
+**Request Parameters**
 
-## Trades APIs
+| **Parameters** | Type   | Required | Field Description   | Description                                                  |
+| -------------- | ------ | -------- | ------------------- | ------------------------------------------------------------ |
+| symbol         | String | YES      | Trading pair symbol | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
 
+**Return Parameters**
 
-### 1. New order interface
+| **Parameters** | Type    | Description                                                  |
+| -------------- | ------- | ------------------------------------------------------------ |
+| volume         | float64 | Volume of opened positions                                   |
+| unit           | string  | The unit corresponding to the Volume of opened positions, CONT. - BTC, ETH, LINK, BCH, etc. |
 
-     Place a new order
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "volume": "10.00",
+          "unit": "BTC",
+        }
+    }
+```
 
-**HTTP Request**
+# Account Interface
 
-     
-           
+## **1. Get Perpetual Swap Account Asset Information**
+
+```
+Get asset information of user‘s Perpetual Account
+```
+
+**HTTP Requests**
+
+```http
+	# Request
+    POST api/v1/user/getBalance
+```
+
+**Request Parameters**
+
+| **Parameters** | Type   | Required | **Field Description**                         | Description |
+| -------------- | ------ | -------- | --------------------------------------------- | ----------- |
+| apiKey         | String | YES      | Interface Key                                 |             |
+| timestamp      | String | YES      | Timestamp of initiating the request, unit: ms |             |
+| currency       | String | YES      | Account Asset                                 |             |
+
+**Return Parameters**
+
+| **Parameters**  | Type    | Description                                                  |
+| --------------- | ------- | ------------------------------------------------------------ |
+| code            | Int64   | error code, 0 means successfully response, others means response failure |
+| msg             | String  | Error Details Description                                    |
+| userId          | String  | User's ID                                                    |
+| currency        | String  | User‘s asset                                                 |
+| balance         | Float64 | Asset Balance                                                |
+| equity          | Float64 | Net Asset Value                                              |
+| unrealisedPNL   | Float64 | Unrealized Profit/Loss                                       |
+| realisedPNL     | Float64 | realized Profit/Loss                                         |
+| availableMargin | Float64 | Available Margin                                             |
+| usedMargin      | Float64 | Used Margin                                                  |
+| freezedMargin   | Float64 | Freezed Margin                                               |
+| longLeverage    | Float64 | long Leverage                                                |
+| shortLeverage   | Float64 | short Leverage                                               |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+            "userId": "123",
+            "currency": "USDT",
+            "balance": 123.33,
+            "equity": 128.99,
+            "unrealisedPNL": 1.22,
+            "realisedPNL": 8.1,
+            "availableMargin": 123.33,
+            "usedMargin": 2.2,
+            "freezedMargin": 3.3,
+            "longLeverage": 10,
+            "shortLeverage": 10,
+        }
+    }
+```
+
+## **2. Perpetual Swap Positions**
+
+    Retrieve information on users' positions of Perpetual Swap.
+
+**HTTP Requests**
+
 ```http
     # Request
-    POST api/v1/user/trade
+    POST api/v1/user/getPositions
 ```
-**Request method**
+
+**Request Method**
 
     POST
 
 **Request Parameters**  
 
-| Name | Type | Mandatory | Description |
+| **Parameters** | Type   | Required | Field Description                                            |
+| -------------- | ------ | -------- | ------------------------------------------------------------ |
+| symbol         | String | YES      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT; Return all if the field is null. |
+| apiKey         | String | YES      |                                                              |
+| timestamp      | String | YES      | Timestamp of initiating the request, unit: ms                |
+
+**Return Parameters**
+
+| **Parameters**  | Type    | Description                                                  |
+| --------------- | ------- | ------------------------------------------------------------ |
+| code            | Int64   | error code, 0 means successfully response, others means response failure |
+| msg             | String  | Error Details Description                                    |
+| symbol          | String  | Trading pair symbol                                          |
+| currency        | String  | Asset Type                                                   |
+| positionId      | String  | Position ID                                                  |
+| positionSide    | String  | Direction Long/Short                                         |
+| marginMode      | String  | margin mode Cross/Isolated                                   |
+| volume          | Float64 | Volume of opened positions                                   |
+| availableVolume | Float64 | Volume of positions that can be closed                       |
+| unrealisedPNL   | Float64 | Unrealized Profit/Loss                                       |
+| realisedPNL     | Float64 | Realized Profit/Loss                                         |
+| margin          | Float64 | Margin                                                       |
+| avgPrice        | Float64 | Ave. price                                                   |
+| liquidatedPrice | Float64 | Estimated Liquidation Price                                  |
+| leverage        | Float64 | leverage                                                     |
+
+ ```javascript
+
+# Response
+    {
+       "code": 0,
+       "msg": "",
+       "data": {
+            "positions": [
+                {
+                    "symbol": "BTC-USDT",
+                    "positionId": "12345678",
+                    "currency": "USDT",
+                    "positionSide": "Long",
+                    "marginMode": "Cross",
+                    "volume": 123.33,
+                    "availableVolume": 128.99,
+                    "unrealisedPNL": 1.22,
+                    "realisedPNL": 8.1,
+                    "margin": 123.33,
+                    "avgPrice": 2.2,
+                    "liquidatedPrice": 2.2,
+                    "leverage": 10,
+                },
+                {
+                    "symbol": "ETH-USDT",
+                    "currency": "USDT",
+                    "positionSide": "Short",
+                    "marginMode": "Isolated",
+                    "volume": 123.33,
+                    "availableVolume": 128.99,
+                    "unrealisedPNL": 1.22,
+                    "realisedPNL": 8.1,
+                    "margin": 123.33,
+                    "avgPrice": 2.2,
+                    "liquidatedPrice": 2.2,
+                    "leverage": 10,
+                },
+            ]
+        }
+    }
+ ```
+
+# Trade Interface
+
+
+## 1. Place a New Order
+
+**HTTP Requests**
+
+```http
+    # Request
+    POST api/v1/user/trade
+```
+**Request Method**
+
+    POST
+
+**Request Parameters**  
+
+| **Parameters** | Type | Required | Description |
 | ------------- |----|----|----|
-| symbol | String | YES | The symbol of contract(BTC-USDT) |
-| apiKey | String | YES | Interface key |
+| symbol | String | YES | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| apiKey | String | YES | Interface Key |
+| timestamp | String | YES | Timestamp of initiating the request, unit: ms |
 | side | String | YES | (Bid/Ask) |
 | entrustPrice | float64 | YES | Price  |
 | entrustVolume | float64 | YES | Volume |
 | tradeType | String | YES | Market/Limit |
 | action | String | YES | Open/Close  |
 
+**Return Parameters** 
+
+| **Parameters** | Type   | Field Description |
+| -------------- | ------ | ----------------- |
+| orderId        | String | Order ID          |
+
 
 ```javascript
 # Response
@@ -687,39 +964,126 @@ If the requests are too frequent, the system will automatically limit the reques
         }
     }
 ```
- 
-**Return Value Description** 
 
-| Return Field | Type | Mandatory | Description |
-| ---- |---- | ---- | ---- |
-| orderId | String | YES | Order ID |
+## 2. One-Click Close Position
 
+```
+After querying the position information, you can close the position by one-click based on the position ID. Please note that the one-click closed position is traded at market price.
+```
 
+**HTTP Requests**
 
-### 2. Cancel Order
- 
-       Cancel Order
+```http
+	# Request
+    POST api/v1/user/oneClickClosePosition
+```
 
-**HTTP Request**
- 
-   
-   
+**Request Method**
+
+    POST
+
+**Request Parameters**
+
+| **Parameters** | Type   | Required | Description                                                  |
+| -------------- | ------ | -------- | ------------------------------------------------------------ |
+| symbol         | String | YES      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| positionId     | Int64  | YES      | ID of the position needs to be closed with one click         |
+| apiKey         | String | YES      | Interface Key                                                |
+| timestamp      | String | YES      | Timestamp of initiating the request, unit: ms                |
+
+**Return Parameters** 
+
+| **Parameters** | Type   | Description                                                  |
+| -------------- | ------ | ------------------------------------------------------------ |
+| code           | Int64  | error code, 0 means successfully response, others means response failure |
+| msg            | String | Error Details Description                                    |
+| orderId        | String | Order ID generated by one-click close                        |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+## 3. One-Click Close All Positions
+
+```
+Close all positions within the current account by one click. Please note that the one-click closed positions are traded at market price.
+```
+
+**HTTP Requests**
+
+```http
+	# Request
+    POST api/v1/user/oneClickCloseAllPositions
+```
+
+**Request Method**
+
+```
+POST
+```
+
+**Request Parameters**
+
+| **Parameters** | Type   | Required | Description                                                  |
+| -------------- | ------ | -------- | ------------------------------------------------------------ |
+| symbol         | String | YES      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| apiKey         | String | YES      | Interface Key                                                |
+| timestamp      | String | YES      | Timestamp of initiating the request, unit: ms                |
+
+**Return Parameters**
+
+| **Parameters** | Type         | Description                                                  |
+| -------------- | ------------ | ------------------------------------------------------------ |
+| code           | Int64        | error code, 0 means successfully response, others means response failure |
+| msg            | String       | Error Details Description                                    |
+| orders         | String array | Multiple Order IDs generated by one-click close all          |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "orders": ["123", "456", "789"]
+        }
+    }
+```
+
+## 4. Cancel an Order
+
+       Cancel an order that is currently in a unfilled state
+
+**HTTP Requests**
+
 ```http
     # Request
     POST api/v1/user/cancelOrder
 ```
 
-**Request method**
+**Request Method**
 
     POST
 
 **Request Parameters**  
 
-| Name | Type | Mandatory | Description |
+| **Parameters** | Type | Required | Description |
 | ------------- |----|----|----|
 | orderId   | String | YES | Order ID |
-| symbol    | String | YES | The symbol of contract(BTC-USDT) |
-| apiKey | String | YES | Interface key|
+| symbol    | String | YES | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| apiKey | String | YES | Interface Key |
+| timestamp | String | YES | Timestamp of initiating the request, unit: ms                |
+
+**Return Parameters** 
+
+| **Parameters** | Type   | Field Description |
+| -------------- | ------ | ----------------- |
+| orderId        | String | Order ID          |
 
 
 ```javascript
@@ -732,33 +1096,129 @@ If the requests are too frequent, the system will automatically limit the reques
         }
     }
 ```
-**Return Value Description** 
-| Return Field| Type | Mandatory | Description |
-| ---- |---- | ---- | ---- |
-| orderId | String | YES | Order ID |
+## 5. Cancel a Batch of Orders
 
+```
+Cancel a batch of orders that are currently in a unfilled state
+```
 
-### 3. Query Current Open Order
+**HTTP Requests**
 
-    Query Current Open Order
+```http
+	# Request
+    POST api/v1/user/batchCancelOrders
+```
 
-**HTTP Request**
+**Request Method**
+
+```
+POST
+```
+
+**Request Parameters**  
+
+| **Parameters** | Type   | Required | Description                                                  |
+| -------------- | ------ | -------- | ------------------------------------------------------------ |
+| symbol         | String | YES      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| apiKey         | String | YES      | Interface Key                                                |
+| timestamp      | String | YES      | Timestamp of initiating the request, unit: ms                |
+
+**Return Parameters** 
+
+| **Parameters** | Type   | Description                                                  |
+| -------------- | ------ | ------------------------------------------------------------ |
+| code           | Int64  | error code, 0 means successfully response, others means response failure |
+| msg            | String | Error Details Description                                    |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+## 6. Cancel All Orders
+
+```
+Cancel all orders that are currently in a unfilled state
+```
+
+**HTTP Requests**
+
+```http
+	# Request
+    POST api/v1/user/cancelAll
+```
+
+**Request Method**
+
+```
+POST
+```
+
+**Request Parameters**  
+
+| **Parameters** | Type   | Required | Description                                   |
+| -------------- | ------ | -------- | --------------------------------------------- |
+| apiKey         | String | YES      | Interface Key                                 |
+| timestamp      | String | YES      | Timestamp of initiating the request, unit: ms |
+
+**Return Parameters** 
+
+| **Parameters** | Type   | Description                                                  |
+| -------------- | ------ | ------------------------------------------------------------ |
+| code           | Int64  | error code, 0 means successfully response, others means response failure |
+| msg            | String | Error Details Description                                    |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+## 7. Unfilled Order Acquisition
+
+    Query the details of unfilled orders within the current account over a certain period of time
+
+**HTTP Requests**
 
 ```http
     # Request
     POST api/v1/user/pendingOrders
 ```
 
-**Request method**
+**Request Method**
 
     POST
 
 **Request Parameters**  
 
-| Name | Type | Mandatory | Description |
+| Name | Type | Required | Field Description |
 | ------------- |----|----|----|
-| symbol | String | YES | The symbol of contract(BTC-USDT)，If it‘s null, return all |
-| apiKey | String | YES | Interface key |
+| symbol | String | YES | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT; Return all if the field is null. |
+| apiKey | String | YES |  |
+| timestamp | String | YES | Timestamp of initiating the request, unit: ms |
+
+**Return Parameters** 
+
+| **Parameters** | Type    | Description              |
+| -------------- | ------- | ------------------------ |
+| entrustTm      | String  | Trigger time of order    |
+| side           | String  | Direction (Bid/Ask)      |
+| tradeType      | String  | Order Type(Market/Limit) |
+| action         | String  | Open/Close               |
+| entrustPrice   | Float64 | Order Price              |
+| entrustVolume  | Float64 | Order Amount             |
+| avgFilledPrice | Float64 | Ave. Price               |
+| filledVolume   | Float64 | Filled Amount            |
+| orderId        | String  | Order ID                 |
 
  ```javascript
 
@@ -796,83 +1256,46 @@ If the requests are too frequent, the system will automatically limit the reques
         }
     }
  ```
- 
-**Return Value Description** 
-| Return Field| Type | Mandatory | Description |
-| ------------- |----|----|----|
-| entrustTm     | String  | YES | Trigger time of order |
-| side          | String  | YES | The direction of trading(Bid/Ask) |
-| tradeType     | String  | YES | Order Type(Market/Limit) |
-| action        | String  | YES | Open/Close |
-| entrustPrice  | Float64 | YES | Order Price|
-| entrustVolume | Float64 | YES | Order Amount |
-| avgFilledPrice| Float64 | YES | Ave. Closing Price |
-| filledVolume  | Float64 | YES | Closing Amount |
-| orderId       | String  | YES | Order ID |
 
-  **Remark**
-  
-    For more return error codes, please see the error code description on the homepage
-  
-### 4. Query the details of a single order
-   
-    Query the details of a single order
+## 8. Get Order Details
 
-**HTTP Request**
+**HTTP Requests**
+
    ```http
     # Request
     POST api/v1/user/queryOrderStatus
-```
-**Request method**
+   ```
+**Request Method**
 
     POST
 
 **Request Parameters**  
 
-| Name | Type | Mandatory | Description |
+| **Parameters** | Type | Required | Description |
 | ------------- |----|----|----|
-| apiKey | String | YES | Interface key |
-| symbol | String | YES | The symbol of contract(BTC-USDT) |
+| apiKey | String | YES | Interface Key |
+| timestamp | String | YES | Timestamp of initiating the request, unit: ms |
+| symbol | String | YES | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
 | orderId | String | YES | Order ID |
 
-```javascript
-    # Response
-    {
-        "code": 0,
-        "msg": "",
-        "data": {
-            "entrustTm": "2018-04-25T15:00:51.000Z",
-            "side": "Ask",
-            "tradeType": "Limit",
-            "action": "Close",
-            "entrustPrice": 6.021954,
-            "entrustVolume": 18.098,
-            "filledVolume": 0,
-            "avgFilledPrice": 0,
-            "orderId": "6030",
-            "status": "Filled"
-     	}
-     }
-```
+**Return Parameters**
 
-**Return Value Description**
+| **Parameters** | Type | Description |
+| ------------- |----|----|
+| entrustTm     | String  | Order Time |
+| side          | String  | Direction (Bid/Ask) |
+| tradeType     | String  | Order type (Market/Limit) |
+| action        | String  | Open/Close|
+| entrustPrice  | Float64 | Order Price |
+| entrustVolume | Float64 | Order Amount |
+| avgFilledPrice| Float64 | Ave. Price |
+| filledVolume  | Float64 | Filled Amount |
+| orderId       | String  | Order No. |
+| status        | String  | The status of Order (Filled or PartiallyFilled, Pending, Cancelled, Failed) |
 
-| Return Field | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| entrustTm     | String  | YES | Order Time |
-| side          | String  | YES | The direction of trading(Bid/Ask) |
-| tradeType     | String  | YES | Order type(Market/Limit) |
-| action        | String  | YES | Open/Close|
-| entrustPrice  | Float64 | YES | Order Price |
-| entrustVolume | Float64 | YES | Order Amount |
-| avgFilledPrice| Float64 | YES | Ave. Closing Price |
-| filledVolume  | Float64 | YES | Closing Amount |
-| orderId       | String  | YES | Order No. |
-| status        | String  | YES| The status of Order(Filled or PartiallyFilled, Pending, Cancelled, Failed) |
-  
+**Remarks**
 
-
-| Status | Description |
+| Status | Field Description |
 | ----------|----|
 | Pending           | Order that has not been closed |
 | PartiallyFilled   | Order that has been Partially filled |
@@ -880,31 +1303,93 @@ If the requests are too frequent, the system will automatically limit the reques
 | Filled            | Filled  |
 | Failed            | Failed  |
 
-  **Remark**
-  
-    For more return error codes, please see the error code description on the homepage
+```javascript
+# Response
+{
+    "code": 0,
+    "msg": "",
+    "data": {
+        "entrustTm": "2018-04-25T15:00:51.000Z",
+        "side": "Ask",
+        "tradeType": "Limit",
+        "action": "Close",
+        "entrustPrice": 6.021954,
+        "entrustVolume": 18.098,
+        "filledVolume": 0,
+        "avgFilledPrice": 0,
+        "orderId": "6030",
+        "status": "Filled"
+ 	}
+ }
+```
+## 9. Switch Margin Mode
 
-### 5. Get Information of user‘s account asset 
+Switch the margin mode of the Perpetual Swap Account, Cross Margin mode or Isolated Margin mode.
 
-    Get Information of user‘s account asset 
-          
-**HTTP Request**
+**HTTP Requests**
+
+```http
+	# Request
+    POST api/v1/user/setMarginMode
+```
+
+**Request Method**
+
+```
+POST
+```
+
+**Request Parameters**
+
+| **Parameters** | Type   | Required | Description                                                  |
+| -------------- | ------ | -------- | ------------------------------------------------------------ |
+| symbol         | String | YES      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| marginMode     | String | YES      | Isolated or Cross                                            |
+| apiKey         | String | YES      | Interface key                                                |
+| timestamp      | String | YES      | Timestamp of initiating the request, unit: ms                |
+
+**Return Parameters**
+
+| **Parameters** | Type   | Description                                                  |
+| -------------- | ------ | ------------------------------------------------------------ |
+| code           | Int64  | error code, 0 means successfully response, others means response failure |
+| msg            | String | Error Details Description                                    |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        }
+    }
+```
+
+## 10. Switch Leverage 
+
+    Switch the leverage size of a certain trading pair for long or short positions
+
+**HTTP Requests**
              
-    ```http
-        # Request
-        POST api/v1/user/getBalance
-    ```
 
-**Request method**
+```http
+	# Request
+  	POST api/v1/user/setLeverage
+```
+
+**Request Method**
 
     POST
 
 **Request Parameters**  
 
-| Name | Type | Mandatory | Description |
-| ------------- |----|----|---|---- |
-| apiKey | String | YES | Interface key | |
-| currency  | String | YES  | contract asset | |
+| **Parameters** | Type | Required | Description |
+| ------------- |----|----|---|
+| symbol | String | YES | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| side | String | YES | Leverage of Long or Short positions |
+| leverage | String | YES | Leverage Size |
+| apiKey | String | YES | Interface key |
+| timestamp | String | YES  | Timestamp of initiating the request, unit: ms |
 
     ```javascript
         # Response
@@ -927,173 +1412,12 @@ If the requests are too frequent, the system will automatically limit the reques
             }
     ```
 
-**Return Value Description**
+**Return Parameters**
 
-| Return Field | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| userId	    | String | YES | User's ID |
-| currency   | String | YES | User‘s asset |
-| balance    | Float64 | YES | Asset Balance |
-| equity     | Float64 | YES | Net Asset Value |
-| unrealisedPNL  | Float64 | YES | Unrealized Profit/Loss |
-| realisedPNL    | Float64 | YES | realized Profit/Loss |
-| availableMargin| Float64 | YES | Available Margin |
-| usedMargin     | Float64 | YES | Used Margin |
-| freezedMargin  | Float64 | YES | Freezed Margin |
-| longLeverage   | Float64 | YES | long Leverage |
-| shortLeverage  | Float64 | YES | short Leverage |
-
-  **Remark**
-  
-    For more return error codes, please see the error code description on the homepage
-
-### 6. Query User's Current Position 
-
-    Query User's Current Position 
-
-**HTTP Request**
-
-```http
-    # Request
-    POST api/v1/user/getPositions
-```
-
-**Request method**
-
-    POST
-
-**Request Parameters**  
-
-| Name | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| symbol | String | YES |  The symbol of contract(BTC-USDT)，If it‘s null, return all |
-| apiKey | String | YES | Interface key | 
-
- ```javascript
-
-# Response
-    {
-       "code": 0,
-       "msg": "",
-       "data": {
-            "positions": [
-                {
-                    "symbol": "BTC-USDT",
-                    "currency": "USDT",
-                    "positionSide": "Long",
-                    "marginMode": "Cross",
-                    "volume": 123.33,
-                    "availableVolume": 128.99,
-                    "unrealisedPNL": 1.22,
-                    "realisedPNL": 8.1,
-                    "margin": 123.33,
-                    "avgPrice": 2.2,
-                    "liquidatedPrice": 2.2,
-                    "leverage": 10,
-                },
-                {
-                    "symbol": "ETH-USDT",
-                    "currency": "USDT",
-                    "positionSide": "Short",
-                    "marginMode": "Isolated",
-                    "volume": 123.33,
-                    "availableVolume": 128.99,
-                    "unrealisedPNL": 1.22,
-                    "realisedPNL": 8.1,
-                    "margin": 123.33,
-                    "avgPrice": 2.2,
-                    "liquidatedPrice": 2.2,
-                    "leverage": 10,
-                },
-            ]
-        }
-    }
- ```
- 
-**Return Value Description**
-
-| Return Field | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| symbol         | String  | YES | Contract Type |
-| currency       | String  | YES | User Assets |
-| positionSide   | String  | YES | Position direction Long/Short |
-| marginMode     | String  | YES | margin mode Cross/Isolated |
-| volume         | Float64 | YES | Volume of position |
-| availableVolume| Float64 | YES | Volume of position that can be closed |
-| unrealisedPNL  | Float64 | YES | Unrealized  |
-| realisedPNL    | Float64 | YES | Realised  |
-| margin         | Float64 | YES | Margin |
-| avgPrice       | Float64 | YES | Average open price |
-| liquidatedPrice| Float64 | YES | Estimated Liquidation Price|
-| leverage       | Float64 | YES | leverage |
-
-  **Remark**
-  
-    For more return error codes, please see the error code description on the homepage
-    
-### 7. Get Server Time
-
-    Get Server Time
- 
-**HTTP Request**
-
-  ```http
-        # Request
-        POST api/v1/server/time
-  ```
-  
-**Request Method**
-
-    GET / POST
-
-**Request Parameters**
-  
-    null   
-             
-   ```javascript
-    # Response
-        {
-            "code": 0,
-            "msg": "",
-            "currentTime": 1534431933321
-        }
-   ```
-
-**Return Value Description**
-
-| Return Field | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| currentTime |Int64  | YES | The current time of the system，unit:ms |
-
-
-  **Remark**
-  
-    For more return error codes, please see the error code description on the homepage
-
-
-### 8. Cancel Multiple Orders
-  
-  Cancel Multiple Orders
-
-**HTTP Request**
-
-
-```http
-    # Request
-    POST api/v1/user/batchCancelOrders
-```
-
-**Request Method**
-
-    POST
-
-**Request Parameters**  
-
-| Name | Type | Mandatory | Description |
-| ------------- |----|----|----|
-| symbol | String | YES |  The symbol of contract(BTC-USDT) |
-| apiKey | String | YES | Interface key | 
-
+| **Parameters** | Type | Description |
+| ------------- |----|----|
+| code	| Int64 | error code, 0 means successfully response, others means response failure |
+| msg | String | Error Details Description |
 
 ```javascript
 # Response
@@ -1104,16 +1428,11 @@ If the requests are too frequent, the system will automatically limit the reques
         }
     }
 ```
-**Return Value Description**
-| Return Field | Type | Mandatory | Description |
-| ---- |---- | ---- | ---- |
-| orderId | String | YES | Order ID |
 
-  **Remark**
-  
-    For more return error codes, please see the error code description on the homepage
+  **Remarks**
 
-    
+
+​    
 [Bingbon]: https://bingbon.pro
 [English Docs]: https://bingbon.pro
 [Unix Epoch]: https://en.wikipedia.org/wiki/Unix_time

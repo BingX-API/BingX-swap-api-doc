@@ -87,7 +87,7 @@ curl "https://api-swap-rest.bingbon.pro/api/v1/user/getBalance"
 ```
 * 通过POST方式获取获取用户某资产余额信息，以 apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU, secretKey=UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI 为例
 ```
-timestamp = 1615272721001
+timestamp = 1616488398013
 apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
 currency = USDT
 ```
@@ -96,20 +96,20 @@ currency = USDT
 ```
 apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
 currency = USDT
-timestamp = 1615272721001
+timestamp = 1616488398013
 ```
 
 mothod为POST，path为/api/v1/user/getBalance，生成待签名的参数字符串如下:
 
 ```
-paramString = 'apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001'
+paramString = 'apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013'
 
 ```
 
 按算法生成待签名的字符串
 
 ```
-originString = 'POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001'
+originString = 'POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013'
   
 ```
 
@@ -120,18 +120,21 @@ originString = 'POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6
 ```
 Signature = HmacSHA256(secretkey, originString)
 即：
-Signature = HmacSHA256("UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI", "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001")
+Signature = HmacSHA256("UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI", "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013")
 
 ```
-Signature的结果为xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D，则签名之后的url query参数为
+Signature的结果为S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D，则签名之后的url query参数为
 ```
 apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
 currency = USDT
-timestamp = 1615272721001
-sign = xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D
+timestamp = 1616488398013
+sign = S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D
 
 即最终发送给服务器的API请求应该为：
-"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001&sign=xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D"
+"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013&sign=S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D"
+
+echo -n "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013" | openssl dgst -sha256 -hmac "UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI" -binary | base64 | xargs python2.7 -c 'import sys, urllib;print(urllib.quote(sys.argv[1]))'
+
 ```
 
 ## 请求交互  

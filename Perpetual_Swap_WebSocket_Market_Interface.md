@@ -1,34 +1,39 @@
-Bingbon Exchange Contract Official API documentation
+Official API Documentation for the Bingbon Trading Platform- Websocket
 ==================================================
-[Bingbon][]Developer documentation([English Docs][])。
+[Bingbon][] Developer Documentation ([English Docs][])
 
 <!-- TOC -->
 
 - [Introduction](#Introduction)
+    - [Access](#Access)
+    - [Data Compression](#Data Compression)
+    - [Heartbeats](#Heartbeats)
+    - [Subscriptions](#Subscriptions)
+    - [Unsubscribe](#Unsubscribe)
 - [Perpetual Swap Websocket Market Data](#Perpetual Swap Websocket Market Data Reference) 
-    - [Perpetual Swap Websocket Market API](#Perpetual Swap Websocket Market API)
-        - [1. Subscribe to the Trading Depth of Swap Trading Pairs](#1-Subscribe to the Trading Depth of Swap Trading Pairs)
-        - [2. Subscribe to The Latest Transaction Records of a Single Swap](#2-Subscribe to The Latest Transaction Records of a Single Swap)
+    
+    1. [Subscribe Market Depth Data](#Subscribe Market Depth Data)
+    2. [Subscribe the Latest Trade Detail](#Subscribe the Latest Trade Detail)
 
 <!-- /TOC -->
 
 # Introduction
 
-## The Base URL
+## Access
 
-the base URL of Market Websocket：`wss://open-ws-swap.bingbon.pro/ws`
+the base URL of Websocket Market Data ：`wss://open-ws-swap.bingbon.pro/ws`
 
 ## Data Compression
 
-All data returned by the WebSocket market interface is GZIP compressed, and the client needs to decompress after receiving the data.
+All response data from Websocket server are compressed into GZIP format. Clients have to decompress them for further use.
 
-## Heartbeat
+## Heartbeats
 
-When the user's Websocket client connects to the Bingbon Websocket server, the server will periodically (currently set as 50 seconds) to send a heartbeat string Ping to it.
+Once the Websocket Client and Websocket Server get connected, the server will send a heartbeat- Ping message every 5 seconds (the frequency might change).
 
-When the user's Websocket client receives this heartbeat message, it should return the string Pong message
+When the Websocket Client receives this heartbeat message, it should return Pong message.
 
-## Subscribe
+## Subscriptions
 
 After successfully establishing a connection with the Websocket server, the Websocket client sends the following request to subscribe to a specific topic:
 
@@ -38,14 +43,14 @@ After successfully establishing a connection with the Websocket server, the Webs
   "dataType": "data to sub",
 }
 
-After a successful subscription, the Websocket client will receive a confirmation:
+After a successful subscription, the Websocket client will receive a confirmation message:
 
 {
   "id": "id1",
   "code": 0,
   "msg": "",
 }
-After that, once the subscribed data is updated, the Websocket client will receive the update message pushed by the server
+After that, once the subscribed data is updated, the Websocket client will receive the update message pushed by the server.
 
 ## Unsubscribe
 The format of unsubscription is as follows:
@@ -56,7 +61,7 @@ The format of unsubscription is as follows:
   "dataType": "data to unsub",
 }
 
-Confirmation of cancellation of subscription:
+Confirmation of Unsubscription:
 
 {
   "id": "id1",
@@ -65,38 +70,36 @@ Confirmation of cancellation of subscription:
 }
 
 
-# Perpetual Swap Websocket API Reference
+# Perpetual Swap Websocket Market Data
 
-## Perpetual Swap Websocket Market
+## 1. Subscribe Market Depth Data
 
-### 1. Subscribe to the Trading Depth of Swap Trading Pairs
-
-     Subscribe to the push of contract trading pair market depth data, this topic sends the latest market depth snapshot. The frequency of snapshot  is 1 time per second.
+    Subscribe to the push of a certain trading pair's market depth data; this topic sends the latest market depth as a snapshot. Snapshots are sent at a frequency of once every 1 second.
 
 **Subscription Type**
 
-    dataType is market.depth.$Symbol.$Step.$Level，such as market.depth.BTC-USDT.step0.level5
+    The dataType is market.depth.$Symbol.$Step.$Level. E.g. market.depth.BTC-USDT.step0.level5
 
 **Subscription Parameters**  
 
-| Name | Type | Mandatory | Description |
+| Parameters | Type | Required | Description |
 | ------------- |----|----|----|
-| symbol | String | YES | Trading pair, like BTC-USDT |
-| step | String | YES | Combine depth type, step0,step1,step2,step3,step4,step5 |  
-| level | String | YES |  Number of levels, such as level5,level10,level20,level50,level100 | 
+| symbol | String | YES | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| step | String | YES | Merged depth, step0,step1,step2,step3,step4,step5 |
+| level | String | YES | Depth level, such as level5,level10,level20,level50,level100 |
 
-"step" Combine Depth Type
-| Name | Description | 
+"step" Merged Depth
+| Parameters | Description |
 | ----- |----|
-| step0 | Do not merge depth |   
-| step1 | Multiply the minimum precision of the price by 10 to merge the depth data |  
-| step2 | Multiply the minimum precision of the price by 100 to merge the depth data | 
-| step3 | Multiply the minimum precision of the price by 1000 to merge the depth data |
-| step4 | Multiply the minimum precision of the price by 10000 to merge the depth data |
-| step5 | Multiply the minimum precision of the price by 100000 to merge the depth data |
+| step0 | Depth data will not be merged. |
+| step1 | Multiply the minimum precision of the price by 10 to merge the depth data |
+| step2 | Multiply the minimum precision of the price by 100 to merge the depth data |
+| step3 | Multiply the minimum precision of the price by 1,000 to merge the depth data |
+| step4 | Multiply the minimum precision of the price by 10,000 to merge the depth data |
+| step5 | Multiply the minimum precision of the price by 100,000 to merge the depth data |
 
-"level" Depth Level Definition
-| Name | Description |
+"level" Depth Level
+| Parameters | Description |
 | -------- |----|
 | level5   | level 5  |
 | level10  | level 10 |
@@ -106,16 +109,15 @@ Confirmation of cancellation of subscription:
 
 **Push Data** 
 
-| Return Field | Description |  
+| Return Parameters | Description |
 | ------------- |----|
-| code   | For error messages, 0 means normal, 1 means error|
-| dataType | The type of subscribed data, such as market.depth.BTC-USDT.step0.level5 |  
-| data | struct | YES | Push content |
-| asks   | Sell side depth |  
+| code   | With regards to error messages, 0 means normal, and 1 means error |
+| dataType | The type of subscribed data, such as market.depth.BTC-USDT.step0.level5 |
+| data | struct |
+| asks   | Sell side depth |
 | bids   | Buy side depth |
-| p      | price  | float64 
-| v      | volume | float64 
-
+| p | price |
+| v | volume |
 ```javascript
     # Response
     {
@@ -167,32 +169,33 @@ Confirmation of cancellation of subscription:
 ```
 
 
-### 2. Subscribe to The Latest Transaction Records of a Single Swap
+## 2. Subscribe the Latest Trade Detail
 
-    Subscribe to the transaction details of a single Swap
+    Subscribe to the trade detail data of a trading pair
 
 **Subscription Type**
 
-    dataType is market.trade.detail.$Symbol，such as market.trade.detail.BTC-USDT
+    The dataType is market.trade.detail.$Symbol. 
+    E.g. market.trade.detail.BTC-USDT
 
 **Subscription Parameters**
 
-| Name | Type | Mandatory | Field description | Description |
+| Parameters | Type | Required | Field description | Description |
 | -------|--------|--- |-------|------|
-| symbol | String | YES | Swap name | The Swap name needs to be underlined (BTC-USDT) |
+| symbol | String | YES | Trading pair symbol | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
 
 **Push Data**
 
-| Return Field | Description |  
+| Return Parameters | Description |
 | ------------- |----|
-| code   | For error messages, 0 means normal, 1 means error | 
+| code   | With regards to error messages, 0 means normal, and 1 means error |
 | dataType | The type of data subscribed, such as market.tradeDetail.BTC-USDT |
-| data | struct | YES | Push content |
-| trades    | Deal by deal | 
-| time      | data   |    | Closing Time |
-| makerSide | String |    | The direction of Swap (Bid / Ask) |
-| price     | String |    | Closing Price |
-| volume    | String |    | Closing Amount |
+| data | struct |
+| trades    | Deal by deal |
+| time      | data   |
+| makerSide | String |
+| price     | String |
+| volume    | String |
 
    ```javascript
     # Response
@@ -218,12 +221,12 @@ Confirmation of cancellation of subscription:
     }
    ```
 
+**Remarks**
 
-**Remark**
+    For more about return error codes, please see the error code description on the homepage.
 
-    For more return error codes, please see the error code description on the homepage
 
-    
+​    
 [Bingbon]: https://bingbon.pro
 [English Docs]: https://bingbon.pro
 [Unix Epoch]: https://en.wikipedia.org/wiki/Unix_time
