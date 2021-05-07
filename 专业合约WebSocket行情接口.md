@@ -13,6 +13,7 @@ Bingbon交易所官方API文档
 - [Websocket 行情推送](#Websocket 行情推送)
     - [订阅合约交易深度](#1-订阅合约交易深度)
     - [订单最新成交记录](#2-订单最新成交记录)
+    - [订阅合约k线数据](#3-订阅合约k线数据)
 
 <!-- /TOC -->
 
@@ -88,6 +89,8 @@ WebSocket 行情接口返回的所有数据都进行了 GZIP 压缩，需要 cli
 | step | String | 是 | 合并深度类型，step0，step1，step2，step3，step4，step5 |
 | level | String | 是 | 档数, 如 level5，level10，level20，level50，level100 |
 
+**备注**
+
 "step" 合并深度类型
 | 参数名 | 描述 |
 | ----- |----|
@@ -113,11 +116,11 @@ WebSocket 行情接口返回的所有数据都进行了 GZIP 压缩，需要 cli
 | ------------- |----|
 | code   | 是否有错误信息，0为正常，1为有错误 |
 | dataType | 订阅的数据类型，例如 market.depth.BTC-USDT.step0.level5 |
-| data | struct | 是 | 推送内容 |
+| data | 推送内容 |
 | asks   | 卖方深度 |
 | bids   | 买方深度 |
-| p      | price价格  | float64
-| v      | volume数量 | float64
+| p      | price价格  |
+| v      | volume数量 | 
 
 ```javascript
     # Response
@@ -192,12 +195,12 @@ WebSocket 行情接口返回的所有数据都进行了 GZIP 压缩，需要 cli
 | ------------- |----|
 | code   | 是否有错误信息，0为正常，1为有错误 |
 | dataType | 订阅的数据类型，例如 market.tradeDetail.BTC-USDT |
-| data | struct | 是 | 推送内容 |
+| data | 推送内容 |
 | trades    | 逐笔成交 |
-| time      | data   |    | 成交时间 |
-| makerSide | String |    | 吃单方向(Bid / Ask 买/卖) |
-| price     | String |    | 成交价格 |
-| volume    | String |    | 成交数量 |
+| time      | 成交时间 |
+| makerSide | 吃单方向(Bid / Ask 买/卖) |
+| price     | 成交价格 |
+| volume    | 成交数量 |
 
    ```javascript
     # Response
@@ -223,6 +226,75 @@ WebSocket 行情接口返回的所有数据都进行了 GZIP 压缩，需要 cli
     }
    ```
 
+## 3. 订阅合约k线数据
+
+    订阅单个合约的行情k线数据
+
+**订阅类型**
+
+    dataType 为 market.kline.$Symbol.$KlineType，比如market.kline.$Symbol.BTC-USDT.1min
+
+**订阅参数**
+
+| 参数名  | 参数类型  | 必填 | 字段描述 | 描述 |
+| -------|--------|--- |-------|------|
+| symbol | String | 是 |合约名称| 合约名称中需有"-"，如BTC-USDT |
+| klineType | String | 是 |k线类型| 参考字段说明，如分钟，小时，周等 |
+
+**备注**
+
+| klineType 字段说明  | |
+| ----------|----|
+| 1         | 1m一分钟K线 |
+| 3         | 3m三分钟K线 |
+| 5         | 5m五分钟K线 |
+| 15        | 15m十五分钟K线 |
+| 30        | 30m三十分钟K线 |
+| 60        | 1h一小时K线 |
+| 120       | 2h两小时K线 |
+| 240       | 4h四小时K线 |
+| 360       | 6h六小时K线 |
+| 720       | 12h十二小时K线 |
+| 1D        | 1D日K线 |
+| 1W        | 1W周K线 |
+| 1M        | 1M月K线 |
+
+**推送数据** 
+
+| 返回字段|字段说明|  
+| ------------- |----|
+| code   | 是否有错误信息，0为正常，1为有错误 |
+| data | 推送内容 |
+| dataType | 数据类型 |
+| klineInfosVo    | K线数据 |
+| close      | 收盘价 |
+| high    | 最高价 |
+| low     | 最低价 |
+| open    | 收盘价 |
+| statDate    | k线时间 |
+| time    | k线时间戳，单位是毫秒 |
+| volume    | 成交量 |
+
+   ```javascript
+    # Response
+    {
+        "code": 0,
+        "data": {
+            "klineInfosVo": [
+                {
+                    "close": 54564.31, 
+                    "high": 54711.73,
+                    "low": 54418.27,
+                    "open": 54577.41, 
+                    "statDate": "2021-04-29T11:00:00.000+0800", 
+                    "time": 1619665200000, 
+                    "volume": 1607.0727000000002
+                }
+            ]
+        },
+        "dataType": "market.kline.BTC-USDT.30min" // 数据类型
+    }
+   ```
 
   **备注**
 

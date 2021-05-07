@@ -4,15 +4,20 @@ Official API Documentation for the Bingbon Trading Platform- Websocket
 
 <!-- TOC -->
 
-- [Introduction](#Introduction)
-    - [Access](#Access)
-    - [Data Compression](#data-compression)
-    - [Heartbeats](#Heartbeats)
-    - [Subscriptions](#Subscriptions)
-    - [Unsubscribe](#Unsubscribe)
-- [Perpetual Swap Websocket Market Data](#perpetual-swap-websocket-market-data) 
-    - [Subscribe Market Depth Data](#subscribe-market-depth-data)
-    - [Subscribe the Latest Trade Detail](#subscribe-the-latest-trade-detail)
+- [Official API Documentation for the Bingbon Trading Platform- Websocket](#official-api-documentation-for-the-bingbon-trading-platform--websocket)
+- [Introduction](#introduction)
+  - [Access](#access)
+  - [Data Compression](#data-compression)
+  - [Heartbeats](#heartbeats)
+  - [Subscriptions](#subscriptions)
+  - [Unsubscribe](#unsubscribe)
+- [Perpetual Swap Websocket Market Data](#perpetual-swap-websocket-market-data)
+  - [1. Subscribe Market Depth Data](#1-subscribe-market-depth-data)
+  - [2. Subscribe the Latest Trade Detail](#2-subscribe-the-latest-trade-detail)
+  - [3. Subscribe K-Line Data](#3-subscribe-k-line-data)
+  
+    1. [Subscribe Market Depth Data](#Subscribe Market Depth Data)
+    2. [Subscribe the Latest Trade Detail](#Subscribe the Latest Trade Detail)
 
 <!-- /TOC -->
 
@@ -71,7 +76,7 @@ Confirmation of Unsubscription:
 
 # Perpetual Swap Websocket Market Data
 
-## Subscribe Market Depth Data
+## 1. Subscribe Market Depth Data
 
     Subscribe to the push of a certain trading pair's market depth data; this topic sends the latest market depth as a snapshot. Snapshots are sent at a frequency of once every 1 second.
 
@@ -112,7 +117,7 @@ Confirmation of Unsubscription:
 | ------------- |----|
 | code   | With regards to error messages, 0 means normal, and 1 means error |
 | dataType | The type of subscribed data, such as market.depth.BTC-USDT.step0.level5 |
-| data | struct |
+| data | Push Data |
 | asks   | Sell side depth |
 | bids   | Buy side depth |
 | p | price |
@@ -168,7 +173,7 @@ Confirmation of Unsubscription:
 ```
 
 
-## Subscribe the Latest Trade Detail
+## 2. Subscribe the Latest Trade Detail
 
     Subscribe to the trade detail data of a trading pair
 
@@ -189,12 +194,12 @@ Confirmation of Unsubscription:
 | ------------- |----|
 | code   | With regards to error messages, 0 means normal, and 1 means error |
 | dataType | The type of data subscribed, such as market.tradeDetail.BTC-USDT |
-| data | struct |
+| data | Push Data |
 | trades    | Deal by deal |
-| time      | data   |
-| makerSide | String |
-| price     | String |
-| volume    | String |
+| time      | Closing Time |
+| makerSide | Direction ( Bid / Ask) |
+| price     | Closing Price |
+| volume    | Filled Amount |
 
    ```javascript
     # Response
@@ -219,6 +224,77 @@ Confirmation of Unsubscription:
         }
     }
    ```
+
+## 3. Subscribe K-Line Data
+
+    Subscribe to market k-line data of one trading pair
+
+**Subscription Type**
+
+    The dataType is market.kline.$Symbol.$KlineType. 
+    E.g. market.kline.$Symbol.BTC-USDT.1min
+
+**Subscription Parameters**
+
+| Parameters | Type   | Required | Field Description   | Description                                                  |
+| ---------- | ------ | -------- | ------------------- | ------------------------------------------------------------ |
+| symbol     | String | YES      | Trading pair symbol | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| klineType  | String | YES      | K-Line Type         | The type of K-Line ( minutes, hours, weeks etc.)             |
+
+**Remarks**
+
+| klineType | Field Description |
+| --------- | ----------------- |
+| 1         | 1 min Kline       |
+| 3         | 3 min Kline       |
+| 5         | 5 min Kline       |
+| 15        | 15 min Kline      |
+| 30        | 30 min Kline      |
+| 60        | 1-hour Kline      |
+| 120       | 2-hour Kline      |
+| 240       | 4-hour Kline      |
+| 360       | 6-hour Kline      |
+| 720       | 12-hour Kline     |
+| 1D        | 1-Day Kline       |
+| 1W        | 1-Week Kline      |
+| 1M        | 1-Month Kline     |
+
+**Push Data**
+
+| Return Parameters | Field Description                                            |
+| ----------------- | ------------------------------------------------------------ |
+| code              | With regards to error messages, 0 means normal, and 1 means error |
+| data              | Push Data                                                    |
+| dataType          | Data Type                                                    |
+| klineInfosVo      | Kline Data                                                   |
+| close             | Closing Price                                                |
+| high              | High                                                         |
+| low               | Low                                                          |
+| open              | Opening Price                                                |
+| statDate          | Kline Date                                                   |
+| time              | The timestamp of K-Line，Unit: ms                            |
+| volume            | Volume                                                       |
+
+```javascript
+ # Response
+ {
+     "code": 0,
+     "data": {
+         "klineInfosVo": [
+             {
+                 "close": 54564.31, 
+                 "high": 54711.73,
+                 "low": 54418.27,
+                 "open": 54577.41, 
+                 "statDate": "2021-04-29T11:00:00.000+0800", 
+                 "time": 1619665200000, 
+                 "volume": 1607.0727000000002
+             }
+         ]
+     },
+     "dataType": "market.kline.BTC-USDT.30min"
+ }
+```
 
 **Remarks**
 
