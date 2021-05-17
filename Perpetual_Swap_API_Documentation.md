@@ -4,43 +4,48 @@ Bingbon Developer Documentation ([English Docs][])
 
 <!-- TOC -->
 
-- [Introduction](#Introduction)
-- [Authentication](#Authentication)
-    - [Generate an API Key](#generate-an-api-key)
-    - [Make Requests](#make-requests)
-    - [Signature](#Signature)
-    - [Requests](#Requests)
-- [Basic Information](#Basic Information)
-    - [Common Error Codes](#common-error-codes)
-    - [Timestamp](#Timestamp)
-    - [Numbers](#Numbers)
-    - [Rate Limits](#rate-limits)
-        - [REST API](#rest-api)
-    - [Get Server Time](#get-server-time)
+- [Official API Documentation for the Bingbon Trading Platform](#official-api-documentation-for-the-bingbon-trading-platform)
+- [Introduction](#introduction)
+- [**Authentication**](#authentication)
+  - [Generate an API Key](#generate-an-api-key)
+  - [Make Requests](#make-requests)
+  - [Signature](#signature)
+  - [Requests](#requests)
+- [**Basic Information**](#basic-information)
+  - [Common Error Codes](#common-error-codes)
+  - [Timestamp](#timestamp)
+    - [Example](#example)
+  - [Numbers](#numbers)
+  - [Rate Limits](#rate-limits)
+    - [REST API](#rest-api)
+  - [Get Server Time](#get-server-time)
 - [Market Interface](#market-interface)
-    - [Contract Information](#1.-contract-information)
-    - [Get Latest Price of a Trading Pair](#2.-get-latest-price-of-a-trading-pair)
-    - [Get Market Depth](#3.-get-market-depth)
-    - [The latest Trade of a Trading Pair](#4.-the-latest-trade-of-a-trading-pair)
-    - [Current Funding Rate](#5.-current-funding-rate)
-    - [Funding Rate History](#6.-funding-rate-history)
-    - [Get K-Line Data](#7.-get-k-line-data)
-    - [K-Line Data History](#8.-k-line-data-history)
-    - [Get Swap Open Positions](#9.-get-swap-open-positions)
+  - [1. Contract Information](#1-contract-information)
+  - [2. Get Latest Price of a Trading Pair](#2-get-latest-price-of-a-trading-pair)
+  - [3. Get Market Depth](#3-get-market-depth)
+  - [4. The latest Trade of a Trading Pair](#4-the-latest-trade-of-a-trading-pair)
+  - [5. Current Funding Rate](#5-current-funding-rate)
+  - [6. Funding Rate History](#6-funding-rate-history)
+  - [7. Get K-Line Data](#7-get-k-line-data)
+  - [8. K-Line Data History](#8-k-line-data-history)
+  - [9. Get Swap Open Positions](#9-get-swap-open-positions)
+  - [10. Get Ticker](#10-get-ticker)
+- [](#)
 - [Account Interface](#account-interface)
-    - [Get Perpetual Swap Account Asset Information](#1.**-get-perpetual-swap-account-asset-information)
-    - [Perpetual Swap Positions](#2.**-perpetual-swap-positions)
+  - [**1. Get Perpetual Swap Account Asset Information**](#1-get-perpetual-swap-account-asset-information)
+  - [**2. Perpetual Swap Positions**](#2-perpetual-swap-positions)
 - [Trade Interface](#trade-interface)
-    - [Place a New Order](#1.-place-a-new-order)
-    - [One-Click Close Position](#2.-one-click-close-position)
-    - [One-Click Close All Positions](#3.-one-click-close-all-positions)
-    - [Cancel an Order](#4.-cancel-an-order)
-    - [Cancel a Batch of Orders](#5.-cancel-a-batch-of-orders)
-    - [Cancel All Orders](#6.-cancel-all-orders )
-    - [Unfilled Order Acquisition](#7.-unfilled-order-acquisition)
-    - [Get Order Details](#8.-get-order-details) 
-    - [Switch Margin Mode](#9.-switch-margin-mode) 
-    - [Switch Leverage](#10.-switch-leverage)
+  - [1. Place a New Order](#1-place-a-new-order)
+  - [2. One-Click Close Position](#2-one-click-close-position)
+  - [3. One-Click Close All Positions](#3-one-click-close-all-positions)
+  - [4. Cancel an Order](#4-cancel-an-order)
+  - [5. Cancel a Batch of Orders](#5-cancel-a-batch-of-orders)
+  - [6. Cancel All Orders](#6-cancel-all-orders)
+  - [7. Unfilled Order Acquisition](#7-unfilled-order-acquisition)
+  - [8. Query Order Details](#8-query-order-details)
+  - [9. Switch Margin Mode](#9-switch-margin-mode)
+  - [10. Switch Leverage](#10-switch-leverage)
+  - [11. User's Force Orders](#11-users-force-orders)
 
 <!-- /TOC -->
 
@@ -86,7 +91,7 @@ curl "https://api-swap-rest.bingbon.pro/api/v1/user/getBalance"
 ```
 * “getBalance” refers to Get user's Perpetual Swap Account Asset Information in terms of "POST" requests. Take apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU, secretKey=UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI as an example.
 ```
-timestamp = 1616488398013
+timestamp = 1615272721001
 apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
 currency = USDT
 ```
@@ -95,20 +100,20 @@ The parameters are as follows based on lexicographical sorting.
 ```
 apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
 currency = USDT
-timestamp = 1616488398013
+timestamp = 1615272721001
 ```
 
 The request method is "POST"; the path is /api/v1/user/getBalance; accordingly a string to be signed is generated as
 
 ```
-paramString = 'apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013'
+paramString = 'apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001'
   
 ```
 
 Further generate the string to be signed by algorithm as
 
 ```
-originString = 'POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013'
+originString = 'POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001'
 ```
 
 Then, add the Secret Key to the string above to generate the final string.
@@ -117,24 +122,19 @@ Then, add the Secret Key to the string above to generate the final string.
 E.g:
 ```
 Signature = HmacSHA256(secretkey, originString)
-Signature = Base64Encode(Signature)
-Signature = UrlEncode(Signature)
 i.e.
-Signature = HmacSHA256("UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI", "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013")
-
-echo -n "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013" | openssl dgst -sha256 -hmac "UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI" -binary | base64 | xargs python2.7 -c 'import sys, urllib;print(urllib.quote(sys.argv[1]))'
+Signature = HmacSHA256("UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI", "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001")
 
 ```
-The result of the “Sign” is S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D; the url query parameter should be as follows.
+The result of the “Sign” is xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D; the url query parameter should be as follows.
 ```
 apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
 currency = USDT
-timestamp = 1616488398013
-sign = S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D
+timestamp = 1615272721001
+sign = xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D
 
 The final API request sent to the server should be:
-"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1616488398013&sign=S7Ok3L5ROXSbYfXj9ryeBbKfRosh9tmH%2FAKiwj7eAoc%3D"
-
+"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001&sign=xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D"
 ```
 
 ## Requests
@@ -577,7 +577,7 @@ To prevent abuse, Bingbon imposes rate limits on incoming requests. When a rate 
 
 **Remarks**
 
-| klineType | Field description |
+| klineType | Field Description |
 | ----------|----|
 | 1	        | 1min Kline |
 | 3         | 3min Kline |
@@ -774,6 +774,57 @@ To prevent abuse, Bingbon imposes rate limits on incoming requests. When a rate 
     }
 ```
 
+## 10. Get Ticker
+
+**HTTP Requests**
+
+```http
+    # Request
+    GET api/v1/market/getTicker
+```
+
+**Request Parameters**
+
+| Parameters | Type   | Required | Field Description   | Description                                                  |
+| ---------- | ------ | -------- | ------------------- | ------------------------------------------------------------ |
+| symbol     | String | NO       | Trading pair symbol | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+
+**Return Parameters** 
+
+| Parameters         | Type   | Description                             |
+| ------------------ | ------ | --------------------------------------- |
+| symbol             | String | Trading pair symbol                     |
+| priceChange        | String | Price change, in USDT                   |
+| priceChangePercent | String | Price change expressed as a percentage  |
+| lastPrice          | String | The price for the last trade            |
+| lastVolume         | String | The volume for the last trade           |
+| highPrice          | String | Highest price during 24h                |
+| lowPrice           | String | Lowest price during 24h                 |
+| volume             | String | Volume during last 24h in base currency |
+| dayVolume          | String | Volume during last 24h, in USDT         |
+| openPrice          | String | 24h open price                          |
+
+# 
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "symbol": "BTC-USDT",
+          "priceChange": "10.00",
+          "priceChangePercent": "10",
+          "lastPrice": "5738.23",
+          "lastVolume": "31.21",
+          "highPrice": "5938.23",
+          "lowPrice": "5238.23",
+          "volume": "23211231.13",
+          "dayVolume": "213124412412.47",
+          "openPrice": "5828.32"
+        }
+    }
+```
+
 # Account Interface
 
 ## **1. Get Perpetual Swap Account Asset Information**
@@ -785,7 +836,7 @@ Get asset information of user‘s Perpetual Account
 **HTTP Requests**
 
 ```http
-	# Request
+    # Request
     POST api/v1/user/getBalance
 ```
 
@@ -1259,7 +1310,7 @@ POST
     }
  ```
 
-## 8. Get Order Details
+## 8. Query Order Details
 
 **HTTP Requests**
 
@@ -1431,10 +1482,69 @@ POST
     }
 ```
 
-  **Remarks**
+## 11. User's Force Orders
+
+**HTTP Requests**
+
+```http
+    # Request
+    POST api/v1/user/forceOrders
+```
+
+**Request Method**
+
+```
+POST
+```
+
+**Request Parameters**
+
+| **Parameters** | Type   | Required | Description                                                  |
+| -------------- | ------ | -------- | ------------------------------------------------------------ |
+| symbol         | String | YES      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| autoCloseType  | String | YES      | "LIQUIDATION" for liquidation orders, "ADL" for ADL orders.  |
+| lastOrderId    | int64  | YES      | Used for paging, fill in 0 for the first time; for subsequent requests, fill in the last order id from the previous return results. |
+| length         | int64  | YES      | Length per request, max 100                                  |
+
+**Return Parameters**
+
+| **Parameters** | Type    | Description                                                 |
+| -------------- | ------- | ----------------------------------------------------------- |
+| symbol         | String  | Trading pair symbol                                         |
+| tradeType      | String  | Order type, Limit or Market                                 |
+| action         | String  | "LIQUIDATION" for liquidation orders, "ADL" for ADL orders. |
+| avgFilledPrice | Float64 | Average filled price                                        |
+| entrustTm      | String  | Entrust time                                                |
+| filledVolume   | Float64 | Filled volume                                               |
+| orderId        | String  | Order No.                                                   |
+| side           | String  | Direction (Bid/Ask)                                         |
+| profit         | Float64 | P&L                                                         |
+| commission     | Float64 | Fees                                                        |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        	"symbol": "BTC-USDT",
+        	"tradeType": "Limit",
+        	"action": "Liquidation",
+        	"avgFilledPrice": 5938.23,
+        	"entrustTm": "2018-04-25T15:00:51.000Z",
+        	"filledVolume": 1.2123,
+        	"orderId": 123456789,
+        	"side": "Bid",
+        	"profit": -11.34,
+        	"commission": 0.4231
+        }
+    }
+```
+
+**Remarks**
 
 
-​    
+ 
 [Bingbon]: https://bingbon.pro
 [English Docs]: https://bingbon.pro
 [Unix Epoch]: https://en.wikipedia.org/wiki/Unix_time

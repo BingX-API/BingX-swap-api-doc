@@ -28,6 +28,7 @@ Bingbon交易所官方API文档
   - [7. 查询K线最新数据](#7-查询k线最新数据)
   - [8. 查询K线历史数据](#8-查询k线历史数据)
   - [9. 查询合约未平仓数量](#9-查询合约未平仓数量)
+  - [10. 查询合约24小时价格变动情况](#10-查询合约24小时价格变动情况)
 - [账户接口](#账户接口)
   - [1. 查询账户信息](#1-查询账户信息)
   - [2. 查询持仓信息](#2-查询持仓信息)
@@ -42,6 +43,7 @@ Bingbon交易所官方API文档
   - [8. 查询订单详情](#8-查询订单详情)
   - [9. 切换全仓/逐仓](#9-切换全仓逐仓)
   - [10. 修改杠杆](#10-修改杠杆)
+  - [11. 查询强平订单历史](#11-查询强平订单历史)
 
 
 <!-- /TOC -->
@@ -287,6 +289,8 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | tradeMinLimit    | 交易最小单位，单位为张 |
 | currency   | 结算和保证金货币资产 |
 | asset      | 合约交易资产 |
+| maxLongLeverage   | 多头交易的最大杠杆倍数 |
+| maxShortLeverage  | 空头交易的最大杠杆倍数 |
 
 ```javascript
     # Response
@@ -303,7 +307,9 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             "feeRate": 0.001,
             "tradeMinLimit": 1,
             "currency": "USDT",
-            "asset": "BTC"
+            "asset": "BTC",
+            "maxLongLeverage": 100,
+            "maxShortLeverage": 100
         }, {
             "contractId": "101",
             "symbol": "ETH_USDT",
@@ -314,7 +320,9 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             "feeRate": 0.001,
             "tradeMinLimit": 1,
             "currency": "USDT",
-            "asset": "ETH"
+            "asset": "ETH",
+            "maxLongLeverage": 50,
+            "maxShortLeverage": 50
         }],
         ...
    } 
@@ -789,6 +797,57 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
         }
     }
 ```
+
+## 10. 查询合约24小时价格变动情况
+
+**HTTP请求**
+
+```http
+    # Request
+    GET api/v1/market/getTicker
+```
+
+**请求参数**
+
+| 参数名  | 参数类型  | 必填 | 字段描述 | 描述 |
+| -------|--------|--- |-------|------|
+| symbol | String | 否 |合约名称| 合约名称中需有"-"，如BTC-USDT |
+
+**返回值说明**
+
+| 参数名 | 参数类型  | 描述 |
+| ------------- |----|----|
+| symbol  | String | 合约名称 |
+| priceChange    | String  | 价格变动, 单位是USDT |
+| priceChangePercent  | String | 价格变动百分比 |
+| lastPrice    | String  | 最新交易价格 |
+| lastVolume  | String |  最新交易数量 |
+| highPrice    | String  | 24小时最高价 |
+| lowPrice  | String | 24小时最低价 |
+| volume    | String  | 24小时成交量 |
+| dayVolume  | String | 24小时成交额, 单位是USDT |
+| openPrice    | String  | 24小时内第一个价格 |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+          "symbol": "BTC-USDT",
+          "priceChange": "10.00",
+          "priceChangePercent": "10",
+          "lastPrice": "5738.23",
+          "lastVolume": "31.21",
+          "highPrice": "5938.23",
+          "lowPrice": "5238.23",
+          "volume": "23211231.13",
+          "dayVolume": "213124412412.47",
+          "openPrice": "5828.32"
+        }
+    }
+```
+
 
 # 账户接口
 
@@ -1424,6 +1483,63 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
     }
 ```
 
+## 11. 查询强平订单历史
+
+
+**HTTP请求**
+
+```http
+    # Request
+    POST api/v1/user/forceOrders
+```
+
+**请求方式**
+
+    POST
+
+**请求参数**
+
+| 参数名 | 参数类型  | 必填 | 描述 |
+| ------------- |----|----|----|
+| symbol    | String | 是 | 合约名称中需有"-"，如BTC-USDT |
+| autoCloseType  | String | 是 | Liquidation 表示强平订单, ADL 表示减仓订单 |
+| lastOrderId  | int64 | 是 | 用于分页, 第一次填写0, 后续填写前一次返回结果里面的最后一个订单id |
+| length    | int64 | 是 | 每次请求的长度, 最大值为100 |
+
+**返回值说明**
+| 参数名 | 参数类型  | 描述 |
+| ---- |---- | ---- |
+| symbol | String  | 合约名称 |
+| tradeType  | String | 订单类型, Limit是限价单, Market是市价单 |
+| action | String  | Liquidation 表示强平订单, ADL 表示减仓订单 |
+| avgFilledPrice  | Float64 | 破产价格 |
+| entrustTm  | String | 成交时间 |
+| filledVolume  | Float64 | 成交数量 |
+| orderId | String  | 订单id |
+| side  | String | 交易方向, Bid买入, Ask卖出 |
+| profit | Float64  | 盈亏 |	
+| commission  | Float64 | 手续费 |
+
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": {
+        	"symbol": "BTC-USDT",
+        	"tradeType": "Limit",
+        	"action": "Liquidation",
+        	"avgFilledPrice": 5938.23,
+        	"entrustTm": "2018-04-25T15:00:51.000Z",
+        	"filledVolume": 1.2123,
+        	"orderId": 123456789,
+        	"side": "Bid",
+        	"profit": -11.34,
+        	"commission": 0.4231
+        }
+    }
+```
 
 **备注**
     
