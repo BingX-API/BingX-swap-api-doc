@@ -30,7 +30,6 @@ Bingbon Developer Documentation ([English Docs][])
   - [8. K-Line Data History](#8-k-line-data-history)
   - [9. Get Swap Open Positions](#9-get-swap-open-positions)
   - [10. Get Ticker](#10-get-ticker)
-- [](#)
 - [Account Interface](#account-interface)
   - [**1. Get Perpetual Swap Account Asset Information**](#1-get-perpetual-swap-account-asset-information)
   - [**2. Perpetual Swap Positions**](#2-perpetual-swap-positions)
@@ -43,9 +42,16 @@ Bingbon Developer Documentation ([English Docs][])
   - [6. Cancel All Orders](#6-cancel-all-orders)
   - [7. Unfilled Order Acquisition](#7-unfilled-order-acquisition)
   - [8. Query Order Details](#8-query-order-details)
-  - [9. Switch Margin Mode](#9-switch-margin-mode)
-  - [10. Switch Leverage](#10-switch-leverage)
-  - [11. User's Force Orders](#11-users-force-orders)
+  - [9. Query Margin Mode](#9-query-margin-mode)
+  - [10. Switch Margin Mode](#10-switch-margin-mode)
+  - [11. Query Leverage](#11-query-leverage)
+  - [12. Switch Leverage](#12-switch-leverage)
+  - [13. User's Force Orders](#13-users-force-orders)
+  - [14. User's History Orders](#14-users-history-orders)
+  - [15. Place a Stop Order](#15-place-a-stop-order)
+  - [16. Cancel Stop Order](#16-cancel-stop-order)
+  - [17. Query Stop Orders](#17-query-stop-orders)
+  - [18. Query History Stop Orders](#18-query-history-stop-orders)
 
 <!-- /TOC -->
 
@@ -274,35 +280,35 @@ To prevent abuse, Bingbon imposes rate limits on incoming requests. When a rate 
 | asset      | Contract denomination asset |
 
 ```javascript
-	# Response
-	{
-	    "code": 0,
-	    "msg": "",
-	    "data": [{
-	        "contractId": "100",
-	        "symbol": "BTC-USDT",
-	        "name": "BTC-USDT",
-	        "size": "0.0001",
-	        "volumePrecision": 0,
-	        "pricePrecision": 2,
-	        "feeRate": 0.001,
-	        "tradeMinLimit": 1,
-	        "currency": "USDT",
-	        "asset": "BTC"
-	    }, {
-	        "contractId": "101",
-	        "symbol": "ETH_USDT",
-	        "name": "ETH-USDT",
-	        "size": "0.01",
-	        "volumePrecision": 0,
-	        "pricePrecision": 2,
-	        "feeRate": 0.001,
-	        "tradeMinLimit": 1,
-	        "currency": "USDT",
-	        "asset": "ETH"
-	    }],
-	    ...
-	} 
+    # Response
+    {
+        "code": 0,
+        "msg": "",
+        "data": [{
+            "contractId": "100",
+            "symbol": "BTC-USDT",
+            "name": "BTC-USDT",
+            "size": "0.0001",
+            "volumePrecision": 0,
+            "pricePrecision": 2,
+            "feeRate": 0.001,
+            "tradeMinLimit": 1,
+            "currency": "USDT",
+            "asset": "BTC"
+        }, {
+            "contractId": "101",
+            "symbol": "ETH_USDT",
+            "name": "ETH-USDT",
+            "size": "0.01",
+            "volumePrecision": 0,
+            "pricePrecision": 2,
+            "feeRate": 0.001,
+            "tradeMinLimit": 1,
+            "currency": "USDT",
+            "asset": "ETH"
+        }],
+        ...
+    } 
 ```
 ## 2. Get Latest Price of a Trading Pair
 
@@ -473,8 +479,8 @@ To prevent abuse, Bingbon imposes rate limits on incoming requests. When a rate 
 **HTTP Requests**
 
 ```http
-	# Request
-	GET api/v1/market/getLatestFunding
+    # Request
+    GET api/v1/market/getLatestFunding
 ```
 
 **Request Parameters**
@@ -579,7 +585,7 @@ To prevent abuse, Bingbon imposes rate limits on incoming requests. When a rate 
 
 | klineType | Field Description |
 | ----------|----|
-| 1	        | 1min Kline |
+| 1            | 1min Kline |
 | 3         | 3min Kline |
 | 5         | 5min Kline |
 | 15        | 15min Kline |
@@ -745,7 +751,7 @@ To prevent abuse, Bingbon imposes rate limits on incoming requests. When a rate 
 **HTTP Requests**
 
 ```http
-	# Request
+    # Request
     GET api/v1/market/getOpenPositions
 ```
 
@@ -1027,7 +1033,7 @@ After querying the position information, you can close the position by one-click
 **HTTP Requests**
 
 ```http
-	# Request
+    # Request
     POST api/v1/user/oneClickClosePosition
 ```
 
@@ -1071,7 +1077,7 @@ Close all positions within the current account by one click. Please note that th
 **HTTP Requests**
 
 ```http
-	# Request
+    # Request
     POST api/v1/user/oneClickCloseAllPositions
 ```
 
@@ -1158,7 +1164,7 @@ Cancel a batch of orders that are currently in a unfilled state
 **HTTP Requests**
 
 ```http
-	# Request
+    # Request
     POST api/v1/user/batchCancelOrders
 ```
 
@@ -1202,7 +1208,7 @@ Cancel all orders that are currently in a unfilled state
 **HTTP Requests**
 
 ```http
-	# Request
+    # Request
     POST api/v1/user/cancelAll
 ```
 
@@ -1272,6 +1278,9 @@ POST
 | avgFilledPrice | Float64 | Ave. Price               |
 | filledVolume   | Float64 | Filled Amount            |
 | orderId        | String  | Order ID                 |
+| profit         | Float64 | Profit                   |
+| commission     | Float64 | Commission               |
+| updateTm       | String  | Update time of order     |
 
  ```javascript
 
@@ -1292,19 +1301,10 @@ POST
                     "avgFilledPrice": 0,
                     "orderId": "6030",
                     "symbol": "BTC-USDT",
-                },
-                {
-                    "entrustTm": "2018-04-25T15:00:51.999Z",
-                    "side": "Ask",
-                    "tradeType": "Limit",
-                    "action": "Close",
-                    "entrustPrice": 6.021954,
-                    "entrustVolume": 18.098,
-                    "filledVolume": 0,
-                    "avgFilledPrice": 0,
-                    "orderId": "6030",
-                    "symbol": "ETH-USDT",
-                },
+                    "profit": 0,
+                    "commission": 0,
+                    "updateTm": "2018-04-25T15:00:52.000Z"
+                }
             ]
         }
     }
@@ -1345,6 +1345,9 @@ POST
 | filledVolume  | Float64 | Filled Amount |
 | orderId       | String  | Order No. |
 | status        | String  | The status of Order (Filled or PartiallyFilled, Pending, Cancelled, Failed) |
+| profit        | Float64 | Profit                   |
+| commission    | Float64 | Commission               |
+| updateTm      | String  | Update time of order     |
 
 **Remarks**
 
@@ -1371,18 +1374,66 @@ POST
         "filledVolume": 0,
         "avgFilledPrice": 0,
         "orderId": "6030",
-        "status": "Filled"
- 	}
+        "status": "Filled",
+        "profit": 0,
+        "commission": 0,
+        "updateTm": "2018-04-25T15:00:52.000Z"
+     }
  }
 ```
-## 9. Switch Margin Mode
+
+## 9. Query Margin Mode
+
+**HTTP Requests**
+
+```http
+    # Request
+    Post api/v1/user/getMarginMode
+```
+
+**Request Method**
+
+    POST
+
+**Request Parameters**
+
+| **Parameters** | Type    | Required | Description |
+| -------------- | ------- | -------- | ----------- |
+| symbol         | String  | Yes      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| apiKey         | String  | Yes      | Interface Key |
+| timestamp      | String  | Yes      | Timestamp of initiating the request, unit: ms |
+
+**Return Parameters**
+
+| **Parameters** | Type   | Description |
+| -------------- | ------ | ----------- |
+| marginMode     | String | Margin Mode |
+
+**Remark**
+
+| MarginMode | Field Description |
+| ---------- | ----------------- |
+| Isolated   | isolated          |
+| Cross      | cross             |
+
+```javascript
+    {
+        "data": {
+            "marginMode":"Isolated"
+        },
+        "code": 0,
+        "message": ""
+    }
+```
+
+## 10. Switch Margin Mode
 
 Switch the margin mode of the Perpetual Swap Account, Cross Margin mode or Isolated Margin mode.
 
 **HTTP Requests**
 
 ```http
-	# Request
+    # Request
     POST api/v1/user/setMarginMode
 ```
 
@@ -1418,7 +1469,47 @@ POST
     }
 ```
 
-## 10. Switch Leverage 
+## 11. Query Leverage
+
+**HTTP Requests**
+
+```http
+    # Request
+    Post api/v1/user/getLeverage
+```
+
+**Request Method**
+
+    POST
+
+**Request Parameters**
+
+| **Parameters** | Type    | Required | Description                                                          |
+| -------------- | ------- | -------- | -------------------------------------------------------------------- |
+| symbol         | String  | Yes      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| apiKey         | String  | Yes      | Interface key                                                        |
+| timestamp      | String  | Yes      | Timestamp of initiating the request, unit: ms                        |
+
+**Return Parameters**
+
+| **Parameters** | Type   | Description                 |
+| -------------- | ------ | --------------------------- |
+| longLeverage   | Int64  | Leverage of long position   |
+| shortLeverage  | Int64  | Leverage of short position  |
+
+```javascript
+# Response
+    {
+        "data": {
+            "longLeverage": 5,
+            "shortLeverage": 5
+        },
+        "code": 0,
+        "message": ""
+    }
+```
+
+## 12. Switch Leverage 
 
     Switch the leverage size of a certain trading pair for long or short positions
 
@@ -1426,8 +1517,8 @@ POST
              
 
 ```http
-	# Request
-  	POST api/v1/user/setLeverage
+    # Request
+      POST api/v1/user/setLeverage
 ```
 
 **Request Method**
@@ -1469,7 +1560,7 @@ POST
 
 | **Parameters** | Type | Description |
 | ------------- |----|----|
-| code	| Int64 | error code, 0 means successfully response, others means response failure |
+| code    | Int64 | error code, 0 means successfully response, others means response failure |
 | msg | String | Error Details Description |
 
 ```javascript
@@ -1482,7 +1573,7 @@ POST
     }
 ```
 
-## 11. User's Force Orders
+## 13. User's Force Orders
 
 **HTTP Requests**
 
@@ -1527,22 +1618,303 @@ POST
         "code": 0,
         "msg": "",
         "data": {
-        	"symbol": "BTC-USDT",
-        	"tradeType": "Limit",
-        	"action": "Liquidation",
-        	"avgFilledPrice": 5938.23,
-        	"entrustTm": "2018-04-25T15:00:51.000Z",
-        	"filledVolume": 1.2123,
-        	"orderId": 123456789,
-        	"side": "Bid",
-        	"profit": -11.34,
-        	"commission": 0.4231
+            "symbol": "BTC-USDT",
+            "tradeType": "Limit",
+            "action": "Liquidation",
+            "avgFilledPrice": 5938.23,
+            "entrustTm": "2018-04-25T15:00:51.000Z",
+            "filledVolume": 1.2123,
+            "orderId": 123456789,
+            "side": "Bid",
+            "profit": -11.34,
+            "commission": 0.4231
         }
     }
 ```
 
+## 14. User's History Orders
+
+**HTTP Requests**
+
+```http
+    # Request
+    POST api/v1/user/historyOrders
+```
+
+**Request Method**
+
+    POST
+
+**Request Parameters**
+
+| **Parameters** | Type   | Required | Description |
+| -------------- |--------|----------|-------------|
+| symbol         | String | Yes      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| lastOrderId    | int64  | Yes      | Used for paging, fill in 0 for the first time; for subsequent requests, fill in the last order id from the previous return results. |
+| length         | int64  | Yes      | Length per request, max 100 |
+| apiKey         | String | Yes      | Interface key |
+| timestamp      | String | Yes      | Timestamp of initiating the request, unit: ms |
+
+**Return Parameters**
+
+| **Parameters**  | Type     | Description |
+| --------------- | -------- | ----------- |
+| symbol          | String   | Symbol |
+| orderId         | String   | Order ID |
+| side            | String   | Direction (Bid/Ask)   |
+| action          | String   | Open/Close/ADL/Liquidation |
+| tradeType       | String   | Order Type(Market/Limit) |
+| entrustVolume   | Float64  | Order Amount |
+| entrustPrice    | Float64  | Order Price  |
+| filledVolume    | Float64  | Filled Amount |
+| avgFilledPrice  | Float64  | Ave. Price  |
+| profit          | Float64  | Profit |
+| commission      | Float64  | Commission |    
+| orderStatus     | String   | Order Status(Filled or PartiallyFilled, Pending, Cancelled, Failed) |
+| entrustTm       | String   | Entrust time of order |
+| updateTm        | String   | Update time of order |
+
 **Remarks**
 
+| OrderStatus       | Field Description                    |
+| ----------------- | ------------------------------------ |
+| Pending           | Order that has not been closed       |
+| PartiallyFilled   | Order that has been Partially filled |
+| Cancelled         | Cancelled                            |
+| Filled            | Filled                               |
+| Failed            | Failed                               |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "data": {
+            "orders": [
+                {
+                    "action": "Open",
+                    "avgFilledPrice": 31333.37,
+                    "commission": -0.0009,
+                    "entrustPrice": 31331.25,
+                    "entrustTm": "2021-01-05T09:15:02Z",
+                    "entrustVolume": 0.0001,
+                    "filledVolume": 0.0001,
+                    "orderId": "996273190",
+                    "orderStatus": "Filled",
+                    "profit": 0,
+                    "side": "Bid",
+                    "symbol": "BTC-USDT",
+                    "tradeType": "Market",
+                    "updateTm": "2021-01-05T09:15:15Z"
+                }
+            ]
+        },
+        "message": ""
+    }
+```
+
+## 15. Place a Stop Order
+
+**HTTP Requests**
+
+```http
+    # Request
+    POST api/v1/user/stopOrder
+```
+
+**Request Method**
+
+    POST
+
+**Request Parameters**
+
+| **Parameters**  | Type    | Required | Description                                   |
+| --------------- |---------|----------|-----------------------------------------------|
+| apiKey          | String  | Yes      | Interface key                                 |
+| timestamp       | String  | Yes      | Timestamp of initiating the request, unit: ms |
+| positionId      | String  | Yes      | Position ID                                   |
+| orderId         | String  | No       | Stop Order ID                                 |
+| stopLossPrice   | Float64 | No       | Stop Loss Price                               |
+| takeProfitPrice | Float64 | No       | Taker Profit Price                            |
+| entrustVolume   | Float64 | Yes      | Order Amount                                  |
+
+**Return Parameters**
+
+| **Parameters** | Type   | Description   |
+| -------------- | ------ | ------------- |
+| orderId        | String | Stop Order ID |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "data": {
+            "orderId": "1414483504200159232"
+        },
+        "message": ""
+    }
+```
+
+## 16. Cancel Stop Order
+
+**HTTP Requests**
+
+```http
+    # Request
+    POST api/v1/user/cancelStopOrder
+```
+
+**Request Method**
+
+    POST
+
+**Request Parameters**
+
+| **Parameters**  | Type   | Required | Description   |
+| --------------- |--------|----------|---------------|
+| apiKey          | String | Yes      | Interface key |
+| timestamp       | String | Yes      | Timestamp of initiating the request, unit: ms |
+| orderId         | String | Yes      | Stop Order ID |
+
+**Return Parameters**
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "message": ""
+    }
+```
+
+## 17. Query Stop Orders
+
+**HTTP Requests**
+
+```http
+    # Request
+    POST api/v1/user/pendingStopOrders
+```
+
+**Request Method**
+
+    POST
+
+**Request Parameters**
+
+| **Parameters**  | Type   | Required | Description        |
+| --------------- |--------|----------|--------------------|
+| apiKey          | String | Yes      | Interface key      |
+| timestamp       | String | Yes      | Timestamp of initiating the request, unit: ms |
+| symbol          | String | Yes      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+
+**Return Parameters**
+
+| **Parameters**  | Type    | Description           |
+| --------------- |-------- | --------------------- |
+| userId          | String  | User ID               |
+| orderId         | String  | Order ID              |
+| symbol          | String  | Symbol                |
+| positionId      | String  | Position ID           |
+| stopLossPrice   | Float64 | Stop Loss Price       |
+| takeProfitPrice | Float64 | Taker Profit Price    |
+| entrustVolume   | Float64 | Order Amount          |
+| side            | String  | Direction (Bid/Ask)   |
+| entrustTm       | String  | Entrust time of order |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "data": {
+            "orders": [
+                {
+                    "entrustTm": "2021-07-12T07:15:21.891Z",
+                    "entrustVolume": 0.001,
+                    "orderId": "1414483504200159232",
+                    "positionId": "1414483266773192704",
+                    "side": "Ask",
+                    "stopLossPrice": 10000,
+                    "symbol": "BTC-USDT",
+                    "takeProfitPrice": 0,
+                    "userId": "809519987784454146"
+                }
+            ]
+        },
+        "message": ""
+    }
+```
+
+## 18. Query History Stop Orders
+
+**HTTP Requests**
+
+```http
+    # Request
+    POST api/v1/user/historyStopOrders
+```
+
+**Request Method**
+
+    POST
+
+**Request Parameters**
+
+| **Parameters**  | Type    | Required | Description   |
+| --------------- |---------|----------|---------------|
+| apiKey          | String  | Yes      | Interface key |
+| timestamp       | String  | Yes      | Timestamp of initiating the request, unit: ms |
+| symbol          | String  | Yes      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| lastOrderId     | int64   | Yes      | Used for paging, fill in 0 for the first time; for subsequent requests, fill in the last order id from the previous return results. |
+| length          | int64   | Yes      | Length per request, max 100 |
+
+**Return Parameters**
+
+| **Parameters**  | Type    | Description |
+| --------------- |-------- | ----------- |
+| userId          | String  | User ID |
+| orderId         | String  | Order ID |
+| symbol          | String  | Symbol |
+| positionId      | String  | Position ID |
+| stopLossPrice   | Float64 | Stop Loss Price |
+| takeProfitPrice | Float64 | Taker Profit Price |
+| entrustVolume   | Float64 | Order Amount |
+| side            | String  | Direction (Bid/Ask) |
+| orderStatus     | String  | Status of Order |
+| entrustTm       | String  | Entrust Time of Order |
+| triggerTm       | String  | Trigger Time of Order |
+
+**Remark**
+
+| OrderStatus         | Description                  |
+| --------------------|------------------------------|
+| TriggerStopLoss     | Trigger by Stop Loss Price   |
+| TriggerTakeProfit   | Trigger By Take Profit Price |
+| Cancelled           | Cancelled                    |
+| Failed              | Failed                       |
+
+```javascript
+# Response
+    {
+        "code": 0,
+        "data": {
+            "orders": [
+                {
+                    "entrustTm": "2021-05-17T10:13:46.000Z",
+                    "entrustVolume": 0.001,
+                    "orderId": "47513",
+                    "orderStatus": "TriggerTakeProfit",
+                    "positionId": "74578",
+                    "side": "Ask",
+                    "stopLossPrice": 0,
+                    "symbol": "BTC-USDT",
+                    "takeProfitPrice": 45400,
+                    "triggerTm": "2021-05-17T11:34:06.000Z",
+                    "userId": "809519987784454146"
+                }
+            ]
+        },
+        "message": ""
+    }
+```
 
  
 [Bingbon]: https://bingbon.pro
