@@ -1091,7 +1091,6 @@ POST
 
 | **Parameters** | Type   | Required | Description                                                  |
 | -------------- | ------ | -------- | ------------------------------------------------------------ |
-| symbol         | String | YES      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
 | apiKey         | String | YES      | Interface Key                                                |
 | timestamp      | String | YES      | Timestamp of initiating the request, unit: ms                |
 
