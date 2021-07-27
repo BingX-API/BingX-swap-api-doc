@@ -1032,6 +1032,8 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | entrustVolume | float64 | 是 | 数量 |
 | tradeType | String | 是 | Market/Limit  市价/限价 |
 | action | String | 是 | Open/Close 开仓/平仓  |
+| takerProfitPrice | float64 | 否 | 止盈价格 |
+| stopLossPrice | float64 | 否 | 止损价格 |
 
 **返回值说明**
 
