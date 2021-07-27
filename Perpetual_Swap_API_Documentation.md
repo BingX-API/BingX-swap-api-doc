@@ -1005,6 +1005,8 @@ Get asset information of user‘s Perpetual Account
 | entrustVolume | float64 | YES | Volume |
 | tradeType | String | YES | Market/Limit |
 | action | String | YES | Open/Close  |
+| takerProfitPrice | float64 | No | Take Profit Price |
+| stopLossPrice | float64 | No | Stop Loss Price |
 
 **Return Parameters** 
 
