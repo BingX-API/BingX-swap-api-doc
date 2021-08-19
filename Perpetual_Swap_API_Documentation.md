@@ -128,9 +128,13 @@ Then, add the Secret Key to the string above to generate the final string.
 E.g:
 ```
 Signature = HmacSHA256(secretkey, originString)
+Signature = Base64Encode(Signature)
+Signature = UrlEncode(Signature)
+
 i.e.
 Signature = HmacSHA256("UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sjmf94ztSI", "POST/api/v1/user/getBalanceapiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001")
-
+Signature = Base64Encode(Signature)
+Signature = UrlEncode(Signature)
 ```
 The result of the “Sign” is xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D; the url query parameter should be as follows.
 ```
