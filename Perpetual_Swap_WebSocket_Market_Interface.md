@@ -1,6 +1,6 @@
 Official API Documentation for the Bingbon Trading Platform- Websocket
 ==================================================
-[Bingbon][] Developer Documentation ([English Docs][])
+Bingbon Developer Documentation
 
 <!-- TOC -->
 
