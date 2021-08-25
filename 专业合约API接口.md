@@ -3,7 +3,6 @@ Bingbon官方API文档
 Bingbon开发者文档([English Docs](./Perpetual_Swap_API_Documentation.md))。
 
 <!-- TOC -->
-- [Bingbon API文档](#bingbon api文档)
 - [介绍](#介绍)
 - [签名认证](#签名认证)
   - [创建API](#创建api)
