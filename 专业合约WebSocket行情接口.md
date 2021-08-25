@@ -1,6 +1,6 @@
 Bingbon官方API文档
 ==================================================
-Bingbon开发者文档([English Docs](./Perpetual_Swap_WebSocket_Market_Interface.md]))。
+Bingbon开发者文档([English Docs](./Perpetual_Swap_WebSocket_Market_Interface.md))。
 
 <!-- TOC -->
 
