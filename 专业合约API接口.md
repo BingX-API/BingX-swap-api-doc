@@ -1,9 +1,9 @@
-Bingbon交易所官方API文档
+Bingbon官方API文档
 ==================================================
-[Bingbon][]交易所开发者文档([English Docs][])。
+Bingbon开发者文档([English Docs](./Perpetual_Swap_API_Documentation.md))。
 
 <!-- TOC -->
-- [Bingbon交易所官方API文档](#bingbon交易所官方api文档)
+- [Bingbon API文档](#bingbon api文档)
 - [介绍](#介绍)
 - [签名认证](#签名认证)
   - [创建API](#创建api)
