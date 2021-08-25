@@ -1,16 +1,16 @@
-Bingbon交易所官方API文档
+Bingbon官方API文档
 ==================================================
-[Bingbon][]交易所开发者文档([English Docs][])。
+Bingbon开发者文档([English Docs](./Perpetual_Swap_WebSocket_Market_Interface.md]))。
 
 <!-- TOC -->
 
-- [Websocket 简介](#Websocket 简介)
+- [Websocket 介绍](#Websocket-介绍)
     - [接入方式](#接入方式)
     - [数据压缩](#数据压缩)
     - [心跳信息](#心跳信息)
     - [订阅方式](#订阅方式)
     - [取消订阅](#取消订阅)
-- [Websocket 行情推送](#Websocket 行情推送)
+- [Websocket 行情推送](#Websocket-行情推送)
     - [订阅合约交易深度](#1-订阅合约交易深度)
     - [订单最新成交记录](#2-订单最新成交记录)
     - [订阅合约k线数据](#3-订阅合约k线数据)
