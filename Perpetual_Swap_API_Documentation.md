@@ -1,6 +1,6 @@
 Official API Documentation for the Bingbon Trading Platform
 ==================================================
-Bingbon Developer Documentation ([English Docs][])
+Bingbon Developer Documentation
 
 <!-- TOC -->
 
