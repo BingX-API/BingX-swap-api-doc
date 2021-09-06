@@ -216,7 +216,7 @@ To prevent abuse, Bingbon imposes rate limits on incoming requests. When a rate 
 
 ### REST API
 
-* Market Interface is the public interface. The rate limit of public interfaces is 10 requests every 1 second at most for each IP.
+* Market Interface is the public interface. The rate limit of public interfaces is 20 requests every 1 second at most for each IP.
 * Account Interface and Transaction Interface are private interfaces. Generally, the private interface rate limit is at most 10 requests every 1 second for each UID.
 * The specific rate limits are indicated in the documentation for some endpoints.
 
