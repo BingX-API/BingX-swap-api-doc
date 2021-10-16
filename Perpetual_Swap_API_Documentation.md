@@ -136,15 +136,15 @@ Signature = HmacSHA256("UuGuyEGt6ZEkpUObCYCmIfh0elYsZVh80jlYwpJuRZEw70t6vomMH7Sj
 Signature = Base64Encode(Signature)
 Signature = UrlEncode(Signature)
 ```
-The result of the “Sign” is xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D; the url query parameter should be as follows.
+The result of the “Sign” is ZLDEpF7hj%2BzW8Cnvfus%2BVsRBK690iZwPI%2BOlYfH%2BHR4%3D; the url query parameter should be as follows.
 ```
 apiKey = Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU
 currency = USDT
 timestamp = 1615272721001
-sign = xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D
+sign = ZLDEpF7hj%2BzW8Cnvfus%2BVsRBK690iZwPI%2BOlYfH%2BHR4%3D
 
 The final API request sent to the server should be:
-"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001&sign=xi0uYQFvJaMxd1bMVPb0PxSw2Rz46Q1olKzM6mzVu18%3D"
+"https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?apiKey=Zsm4DcrHBTewmVaElrdwA67PmivPv6VDK6JAkiECZ9QfcUnmn67qjCOgvRuZVOzU&currency=USDT&timestamp=1615272721001&sign=ZLDEpF7hj%2BzW8Cnvfus%2BVsRBK690iZwPI%2BOlYfH%2BHR4%3D"
 ```
 
 ## Requests
