@@ -196,7 +196,7 @@ A successful response is indicated by HTTP status code 200 and may optionally co
 
 ## Timestamp
 
-Unless otherwise specified, all timestamps from the API are returned with microseconds resolution.
+Unless otherwise specified, all timestamps from the API are returned with millisseconds resolution.
 
 Requests that have a 30+ second difference between the timestamp and the API service time will be considered expired or rejected. We recommend using the time endpoint to query for the API server time if you believe there may be time skew between your server and the API servers.
 
