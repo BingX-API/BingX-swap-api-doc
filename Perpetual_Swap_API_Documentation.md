@@ -4,7 +4,7 @@ Bingx Developer Documentation
 
 <!-- TOC -->
 
-- [Official API Documentation for the Bingbon Trading Platform](#official-api-documentation-for-the-bingbon-trading-platform)
+- [Official API Documentation for the bingx Trading Platform](#official-api-documentation-for-the-bingx-trading-platform)
 - [Introduction](#introduction)
 - [**Authentication**](#authentication)
   - [Generate an API Key](#generate-an-api-key)
