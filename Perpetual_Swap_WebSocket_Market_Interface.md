@@ -1,10 +1,10 @@
-Official API Documentation for the Bingbon Trading Platform- Websocket
+Official API Documentation for the Bingx Trading Platform- Websocket
 ==================================================
-Bingbon Developer Documentation
+Bingx Developer Documentation
 
 <!-- TOC -->
 
-- [Official API Documentation for the Bingbon Trading Platform- Websocket](#official-api-documentation-for-the-bingbon-trading-platform--websocket)
+- [Official API Documentation for the bingx Trading Platform- Websocket](#official-api-documentation-for-the-bingx-trading-platform--websocket)
 - [Introduction](#introduction)
   - [Access](#access)
   - [Data Compression](#data-compression)
@@ -299,9 +299,3 @@ Confirmation of Unsubscription:
 **Remarks**
 
     For more about return error codes, please see the error code description on the homepage.
-
-
-​    
-[Bingbon]: https://bingbon.pro
-[English Docs]: https://bingbon.pro
-[Unix Epoch]: https://en.wikipedia.org/wiki/Unix_time
