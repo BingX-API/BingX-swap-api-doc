@@ -1,6 +1,6 @@
-Official API Documentation for the Bingbon Trading Platform
+Official API Documentation for the Bingx Trading Platform
 ==================================================
-Bingbon Developer Documentation
+Bingx Developer Documentation
 
 <!-- TOC -->
 
@@ -57,18 +57,18 @@ Bingbon Developer Documentation
 
 # Introduction
 
-Welcome to the [Bingbon][] API. You can use our API to access market data, trading, and account management endpoints of Perpetual Swap. The market data API is publicly accessible and provides market data such as The Latest Trade of a Trading Pair. The account and trading APIs require authentication with an API Key which allows you to place and cancel orders and enquire order status and account info.
+Welcome to the [Bingx][] API. You can use our API to access market data, trading, and account management endpoints of Perpetual Swap. The market data API is publicly accessible and provides market data such as The Latest Trade of a Trading Pair. The account and trading APIs require authentication with an API Key which allows you to place and cancel orders and enquire order status and account info.
 
 
 # **Authentication**
 ## Generate an API Key
 
-Before being able to sign any requests, you must create an API Key at the API Management page on Bingbon. Upon creating a key you will have 2 pieces of information which you should remember:
+Before being able to sign any requests, you must create an API Key at the API Management page on Bingx. Upon creating a key you will have 2 pieces of information which you should remember:
 * API Key
 * Secret Key
 
 
-The API Key and Secret Key will be randomly generated and provided by Bingbon.
+The API Key and Secret Key will be randomly generated and provided by Bingx.
 
 ## Make Requests
 
@@ -176,7 +176,7 @@ A successful response is indicated by HTTP status code 200 and may optionally co
 ###Types
 
 * 4XX error codes are used to indicate wrong request content, behavior, format.
-* 5XX error codes are used to indicate problems with the Bingbon service.
+* 5XX error codes are used to indicate problems with the Bingx service.
 
 ###Error Codes
 
@@ -212,7 +212,7 @@ Integer numbers (such as trade ID and sequences) are unquoted.
 
 ## Rate Limits
 
-To prevent abuse, Bingbon imposes rate limits on incoming requests. When a rate limit is exceeded, the system will automatically limit the requests.
+To prevent abuse, Bingx imposes rate limits on incoming requests. When a rate limit is exceeded, the system will automatically limit the requests.
 
 ### REST API
 
@@ -1920,8 +1920,3 @@ POST
         "message": ""
     }
 ```
-
- 
-[Bingbon]: https://bingbon.pro
-[English Docs]: https://bingbon.pro
-[Unix Epoch]: https://en.wikipedia.org/wiki/Unix_time
