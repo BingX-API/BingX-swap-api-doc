@@ -1,6 +1,6 @@
-Bingbon官方API文档
+Bingx官方API文档
 ==================================================
-Bingbon开发者文档([English Docs](./Perpetual_Swap_WebSocket_Market_Interface.md))。
+Bingx开发者文档([English Docs](./Perpetual_Swap_WebSocket_Market_Interface.md))。
 
 <!-- TOC -->
 
@@ -29,7 +29,7 @@ WebSocket 行情接口返回的所有数据都进行了 GZIP 压缩，需要 cli
 
 ## 心跳信息
 
-当用户的Websocket客户端连接到Bingbon Websocket服务器后，服务器会定期（当前设为5秒）向其发送心跳字符串Ping，
+当用户的Websocket客户端连接到Bingx Websocket服务器后，服务器会定期（当前设为5秒）向其发送心跳字符串Ping，
 
 当用户的Websocket客户端接收到此心跳消息后，应返回字符串Pong消息
 
@@ -299,8 +299,3 @@ WebSocket 行情接口返回的所有数据都进行了 GZIP 压缩，需要 cli
   **备注**
 
     更多返回错误代码请看首页的错误代码描述
-
-    
-[Bingbon]: https://bingbon.pro
-[English Docs]: https://bingbon.pro
-[Unix Epoch]: https://en.wikipedia.org/wiki/Unix_time
