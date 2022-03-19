@@ -45,6 +45,7 @@ function httpPost($url)
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_USERAGENT, "curl/7.80.0");
     $response = curl_exec($curl);
     curl_close($curl);
     return $response;
