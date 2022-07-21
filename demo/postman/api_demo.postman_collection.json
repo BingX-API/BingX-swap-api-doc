@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9099e00c-ca45-424e-b5aa-bbb949f804e1",
+		"_postman_id": "f298f1aa-a6a8-4959-8872-1fd51a4df6ea",
 		"name": "api_demo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -147,22 +147,16 @@
 							"var params = new Map;",
 							"params.set(\"apiKey\", apiKey);",
 							"params.set(\"timestamp\", new Date().getTime());",
-							"params.set(\"symbol\", pm.collectionVariables.get(\"symbol\"));",
-							"params.set(\"side\", \"Bid\");",
-							"params.set(\"entrustPrice\", pm.collectionVariables.get(\"entrustPrice\"));",
-							"params.set(\"entrustVolume\", pm.collectionVariables.get(\"entrustVolume\"));",
-							"params.set(\"tradeType\", pm.collectionVariables.get(\"tradeType\"));",
-							"params.set(\"action\", \"Open\");",
+							"params.set(\"symbol\", pm.request.url.query.get(\"symbol\"));",
+							"params.set(\"side\", pm.request.url.query.get(\"side\"));",
+							"params.set(\"entrustPrice\", pm.request.url.query.get(\"entrustPrice\"));",
+							"params.set(\"entrustVolume\", pm.request.url.query.get(\"entrustVolume\"));",
+							"params.set(\"tradeType\", pm.request.url.query.get(\"tradeType\"));",
+							"params.set(\"action\", pm.request.url.query.get(\"action\"));",
 							"var originString = getOriginString(method, path, params);",
 							"var sign = getSignature(originString);",
 							"",
 							"pm.collectionVariables.set(\"timestamp\", params.get(\"timestamp\"));",
-							"pm.collectionVariables.set(\"symbol\", params.get(\"symbol\"));",
-							"pm.collectionVariables.set(\"side\", params.get(\"side\"));",
-							"pm.collectionVariables.set(\"entrustPrice\", params.get(\"entrustPrice\"));",
-							"pm.collectionVariables.set(\"entrustVolume\", params.get(\"entrustVolume\"));",
-							"pm.collectionVariables.set(\"tradeType\", params.get(\"tradeType\"));",
-							"pm.collectionVariables.set(\"action\", params.get(\"action\"));",
 							"pm.collectionVariables.set(\"sign\", sign);",
 							""
 						],
@@ -174,7 +168,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/trade?apiKey={{apiKey}}&timestamp={{timestamp}}&symbol={{symbol}}&side={{side}}&entrustPrice={{entrustPrice}}&entrustVolume={{entrustVolume}}&tradeType={{tradeType}}&action={{action}}&sign={{sign}}",
+					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/trade?apiKey={{apiKey}}&timestamp={{timestamp}}&symbol=BTC-USDT&side=Bid&entrustPrice=10000&entrustVolume=0.0004&tradeType=Market&action=Open&sign={{sign}}",
 					"protocol": "https",
 					"host": [
 						"api-swap-rest",
@@ -198,27 +192,27 @@
 						},
 						{
 							"key": "symbol",
-							"value": "{{symbol}}"
+							"value": "BTC-USDT"
 						},
 						{
 							"key": "side",
-							"value": "{{side}}"
+							"value": "Bid"
 						},
 						{
 							"key": "entrustPrice",
-							"value": "{{entrustPrice}}"
+							"value": "10000"
 						},
 						{
 							"key": "entrustVolume",
-							"value": "{{entrustVolume}}"
+							"value": "0.0004"
 						},
 						{
 							"key": "tradeType",
-							"value": "{{tradeType}}"
+							"value": "Market"
 						},
 						{
 							"key": "action",
-							"value": "{{action}}"
+							"value": "Open"
 						},
 						{
 							"key": "sign",
@@ -275,12 +269,11 @@
 							"var params = new Map;",
 							"params.set(\"apiKey\", apiKey);",
 							"params.set(\"timestamp\", new Date().getTime());",
-							"params.set(\"symbol\", \"BTC-USDT\");",
+							"params.set(\"symbol\", pm.request.url.query.get(\"symbol\"));",
 							"var originString = getOriginString(method, path, params);",
 							"var sign = getSignature(originString);",
 							"",
 							"pm.collectionVariables.set(\"timestamp\", params.get(\"timestamp\"));",
-							"pm.collectionVariables.set(\"symbol\", params.get(\"symbol\"));",
 							"pm.collectionVariables.set(\"sign\", sign);",
 							""
 						],
@@ -292,7 +285,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/getPositions?symbol={{symbol}}&apiKey={{apiKey}}&timestamp={{timestamp}}&sign={{sign}}",
+					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/getPositions?symbol=BTC-USDT&apiKey={{apiKey}}&timestamp={{timestamp}}&sign={{sign}}",
 					"protocol": "https",
 					"host": [
 						"api-swap-rest",
@@ -308,7 +301,7 @@
 					"query": [
 						{
 							"key": "symbol",
-							"value": "{{symbol}}"
+							"value": "BTC-USDT"
 						},
 						{
 							"key": "apiKey",
@@ -373,22 +366,16 @@
 							"var params = new Map;",
 							"params.set(\"apiKey\", apiKey);",
 							"params.set(\"timestamp\", new Date().getTime());",
-							"params.set(\"symbol\", pm.collectionVariables.get(\"symbol\"));",
-							"params.set(\"side\", \"Ask\");",
-							"params.set(\"entrustPrice\", pm.collectionVariables.get(\"entrustPrice\"));",
-							"params.set(\"entrustVolume\", pm.collectionVariables.get(\"entrustVolume\"));",
-							"params.set(\"tradeType\", pm.collectionVariables.get(\"tradeType\"));",
-							"params.set(\"action\", \"Close\");",
+							"params.set(\"symbol\", pm.request.url.query.get(\"symbol\"));",
+							"params.set(\"side\", pm.request.url.query.get(\"side\"));",
+							"params.set(\"entrustPrice\", pm.request.url.query.get(\"entrustPrice\"));",
+							"params.set(\"entrustVolume\", pm.request.url.query.get(\"entrustVolume\"));",
+							"params.set(\"tradeType\", pm.request.url.query.get(\"tradeType\"));",
+							"params.set(\"action\", pm.request.url.query.get(\"action\"));",
 							"var originString = getOriginString(method, path, params);",
 							"var sign = getSignature(originString);",
 							"",
 							"pm.collectionVariables.set(\"timestamp\", params.get(\"timestamp\"));",
-							"pm.collectionVariables.set(\"symbol\", params.get(\"symbol\"));",
-							"pm.collectionVariables.set(\"side\", params.get(\"side\"));",
-							"pm.collectionVariables.set(\"entrustPrice\", params.get(\"entrustPrice\"));",
-							"pm.collectionVariables.set(\"entrustVolume\", params.get(\"entrustVolume\"));",
-							"pm.collectionVariables.set(\"tradeType\", params.get(\"tradeType\"));",
-							"pm.collectionVariables.set(\"action\", params.get(\"action\"));",
 							"pm.collectionVariables.set(\"sign\", sign);",
 							""
 						],
@@ -400,7 +387,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/trade?apiKey={{apiKey}}&timestamp={{timestamp}}&symbol={{symbol}}&side={{side}}&entrustPrice={{entrustPrice}}&entrustVolume={{entrustVolume}}&tradeType={{tradeType}}&action={{action}}&sign={{sign}}",
+					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/trade?apiKey={{apiKey}}&timestamp={{timestamp}}&symbol=BTC-USDT&side=Ask&entrustPrice=30000&entrustVolume=0.0004&tradeType=Market&action=Close&sign={{sign}}",
 					"protocol": "https",
 					"host": [
 						"api-swap-rest",
@@ -424,27 +411,27 @@
 						},
 						{
 							"key": "symbol",
-							"value": "{{symbol}}"
+							"value": "BTC-USDT"
 						},
 						{
 							"key": "side",
-							"value": "{{side}}"
+							"value": "Ask"
 						},
 						{
 							"key": "entrustPrice",
-							"value": "{{entrustPrice}}"
+							"value": "30000"
 						},
 						{
 							"key": "entrustVolume",
-							"value": "{{entrustVolume}}"
+							"value": "0.0004"
 						},
 						{
 							"key": "tradeType",
-							"value": "{{tradeType}}"
+							"value": "Market"
 						},
 						{
 							"key": "action",
-							"value": "{{action}}"
+							"value": "Close"
 						},
 						{
 							"key": "sign",
@@ -520,30 +507,6 @@
 		},
 		{
 			"key": "sign",
-			"value": ""
-		},
-		{
-			"key": "symbol",
-			"value": ""
-		},
-		{
-			"key": "side",
-			"value": ""
-		},
-		{
-			"key": "entrustPrice",
-			"value": ""
-		},
-		{
-			"key": "entrustVolume",
-			"value": ""
-		},
-		{
-			"key": "tradeType",
-			"value": ""
-		},
-		{
-			"key": "action",
 			"value": ""
 		}
 	]
