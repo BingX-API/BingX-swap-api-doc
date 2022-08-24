@@ -1186,6 +1186,7 @@ POST
 | symbol         | String | YES      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
 | apiKey         | String | YES      | Interface Key                                                |
 | timestamp      | String | YES      | Timestamp of initiating the request, unit: ms                |
+| oids           | String | YES      | List of order IDs, multiple order IDs are separated by commas |
 
 **Return Parameters** 
 
