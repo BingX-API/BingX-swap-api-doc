@@ -853,10 +853,10 @@ Get asset information of user‘s Perpetual Account
 **Request Parameters**
 
 | **Parameters** | Type   | Required | **Field Description**                         | Description |
-| -------------- | ------ | -------- | --------------------------------------------- | ----------- |
-| apiKey         | String | YES      | Interface Key                                 |             |
-| timestamp      | String | YES      | Timestamp of initiating the request, unit: ms |             |
-| currency       | String | YES      | Account Asset                                 |             |
+| -------------- | ------ |-------| --------------------------------------------- | ----------- |
+| apiKey         | String | YES   | Interface Key                                 |             |
+| timestamp      | String | YES   | Timestamp of initiating the request, unit: ms |             |
+| currency       | String | NO    | Account Asset                                 |             |
 
 **Return Parameters**
 
@@ -1654,12 +1654,12 @@ POST
 **Request Parameters**
 
 | **Parameters** | Type   | Required | Description |
-| -------------- |--------|----------|-------------|
-| symbol         | String | Yes      | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
-| lastOrderId    | int64  | Yes      | Used for paging, fill in 0 for the first time; for subsequent requests, fill in the last order id from the previous return results. |
-| length         | int64  | Yes      | Length per request, max 100 |
-| apiKey         | String | Yes      | Interface key |
-| timestamp      | String | Yes      | Timestamp of initiating the request, unit: ms |
+| -------------- |--------|-------|-------------|
+| symbol         | String | NO    | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
+| lastOrderId    | int64  | Yes   | Used for paging, fill in 0 for the first time; for subsequent requests, fill in the last order id from the previous return results. |
+| length         | int64  | Yes   | Length per request, max 100 |
+| apiKey         | String | Yes   | Interface key |
+| timestamp      | String | Yes   | Timestamp of initiating the request, unit: ms |
 
 **Return Parameters**
 
