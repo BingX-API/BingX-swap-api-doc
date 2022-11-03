@@ -244,20 +244,20 @@ Confirmation of Unsubscription:
 **Remarks**
 
 | klineType | Field Description |
-| --------- | ----------------- |
-| 1         | 1 min Kline       |
-| 3         | 3 min Kline       |
-| 5         | 5 min Kline       |
-| 15        | 15 min Kline      |
-| 30        | 30 min Kline      |
-| 60        | 1-hour Kline      |
-| 120       | 2-hour Kline      |
-| 240       | 4-hour Kline      |
-| 360       | 6-hour Kline      |
-| 720       | 12-hour Kline     |
-| 1D        | 1-Day Kline       |
-| 1W        | 1-Week Kline      |
-| 1M        | 1-Month Kline     |
+|-----------|-------------------|
+| 1min      | 1 min Kline       |
+| 3min      | 3 min Kline       |
+| 5min      | 5 min Kline       |
+| 15min     | 15 min Kline      |
+| 30min     | 30 min Kline      |
+| 1hour     | 1-hour Kline      |
+| 2hour     | 2-hour Kline      |
+| 4hour     | 4-hour Kline      |
+| 6hour     | 6-hour Kline      |
+| 12hour    | 12-hour Kline     |
+| 1day      | 1-Day Kline       |
+| 1week     | 1-Week Kline      |
+| 1month    | 1-Month Kline     |
 
 **Push Data**
 
