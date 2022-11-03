@@ -884,21 +884,22 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 
 **返回值说明**
 
-| 参数名 | 参数类型  | 描述 |
-| ------------- |----|----|
+| 参数名 | 参数类型  | 描述                |
+| ------------- |----|-------------------|
 | code           | Int64   | 错误码，0表示成功，不为0表示异常失败 |
-| msg            | String  | 错误信息提示 |
-| userId           | String | 用户ID |
-| currency       | String | 用户资产 |
-| balance        | Float64 | 资产余额 |
-| equity         | Float64 | 资产净值 |
-| unrealisedPNL  | Float64 | 未实现盈亏 |
-| realisedPNL    | Float64 | 已实现盈亏 |
-| availableMargin| Float64 | 可用保证金 |
-| usedMargin     | Float64 | 已用保证金 |
-| freezedMargin  | Float64 | 冻结保证金 |
-| longLeverage   | Float64 | 做多杠杆 |
-| shortLeverage  | Float64 | 做空杠杆 |
+| msg            | String  | 错误信息提示            |
+| userId           | String | 用户ID              |
+| minStep           | String | 用户输入步长            |
+| currency       | String | 用户资产              |
+| balance        | Float64 | 资产余额              |
+| equity         | Float64 | 资产净值              |
+| unrealisedPNL  | Float64 | 未实现盈亏             |
+| realisedPNL    | Float64 | 已实现盈亏             |
+| availableMargin| Float64 | 可用保证金             |
+| usedMargin     | Float64 | 已用保证金             |
+| freezedMargin  | Float64 | 冻结保证金             |
+| longLeverage   | Float64 | 做多杠杆              |
+| shortLeverage  | Float64 | 做空杠杆              |
 
 ```javascript
 # Response
@@ -908,6 +909,7 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
         "data": {
             "userId": "123",
             "currency": "USDT",
+            "minStep": "0.01",
             "balance": 123.33,
             "equity": 128.99,
             "unrealisedPNL": 1.22,

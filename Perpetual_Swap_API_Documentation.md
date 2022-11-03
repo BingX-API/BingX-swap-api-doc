@@ -860,21 +860,22 @@ Get asset information of user‘s Perpetual Account
 
 **Return Parameters**
 
-| **Parameters**  | Type    | Description                                                  |
-| --------------- | ------- | ------------------------------------------------------------ |
+| **Parameters**  | Type    | Description                                                              |
+| --------------- | ------- |--------------------------------------------------------------------------|
 | code            | Int64   | error code, 0 means successfully response, others means response failure |
-| msg             | String  | Error Details Description                                    |
-| userId          | String  | User's ID                                                    |
-| currency        | String  | User‘s asset                                                 |
-| balance         | Float64 | Asset Balance                                                |
-| equity          | Float64 | Net Asset Value                                              |
-| unrealisedPNL   | Float64 | Unrealized Profit/Loss                                       |
-| realisedPNL     | Float64 | realized Profit/Loss                                         |
-| availableMargin | Float64 | Available Margin                                             |
-| usedMargin      | Float64 | Used Margin                                                  |
-| freezedMargin   | Float64 | Freezed Margin                                               |
-| longLeverage    | Float64 | long Leverage                                                |
-| shortLeverage   | Float64 | short Leverage                                               |
+| msg             | String  | Error Details Description                                                |
+| userId          | String  | User's ID                                                                |
+| minStep          | String  | User's step                                                              |
+| currency        | String  | User‘s asset                                                             |
+| balance         | Float64 | Asset Balance                                                            |
+| equity          | Float64 | Net Asset Value                                                          |
+| unrealisedPNL   | Float64 | Unrealized Profit/Loss                                                   |
+| realisedPNL     | Float64 | realized Profit/Loss                                                     |
+| availableMargin | Float64 | Available Margin                                                         |
+| usedMargin      | Float64 | Used Margin                                                              |
+| freezedMargin   | Float64 | Freezed Margin                                                           |
+| longLeverage    | Float64 | long Leverage                                                            |
+| shortLeverage   | Float64 | short Leverage                                                           |
 
 ```javascript
 # Response
@@ -884,6 +885,7 @@ Get asset information of user‘s Perpetual Account
         "data": {
             "userId": "123",
             "currency": "USDT",
+            "minStep": "0.01",
             "balance": 123.33,
             "equity": 128.99,
             "unrealisedPNL": 1.22,
