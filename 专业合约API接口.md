@@ -291,6 +291,7 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | symbol     | 合约产品符号，以A_B的形式返回  |
 | name       | 合约产品名字 |
 | size       | 合约大小，例如0.0001 BTC |
+| minStep           | String | 用户输入步长            |
 | volumePrecision  | 交易数量精度 |
 | pricePrecision   | 价格精度 |
 | feeRate          | 交易手续费 |
@@ -310,6 +311,7 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             "symbol": "BTC-USDT",
             "name": "BTC合约",
             "size": "0.0001",
+            "minStep": "0.5",
             "volumePrecision": 0,
             "pricePrecision": 2,
             "feeRate": 0.001,
@@ -323,6 +325,7 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
             "symbol": "ETH_USDT",
             "name": "ETH合约",
             "size": "0.01",
+            "minStep":"0.05",
             "volumePrecision": 0,
             "pricePrecision": 2,
             "feeRate": 0.001,
@@ -889,7 +892,6 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
 | code           | Int64   | 错误码，0表示成功，不为0表示异常失败 |
 | msg            | String  | 错误信息提示            |
 | userId           | String | 用户ID              |
-| minStep           | String | 用户输入步长            |
 | currency       | String | 用户资产              |
 | balance        | Float64 | 资产余额              |
 | equity         | Float64 | 资产净值              |
@@ -909,7 +911,6 @@ HTTP状态码200表示成功响应，并可能包含内容。如果响应含有�
         "data": {
             "userId": "123",
             "currency": "USDT",
-            "minStep": "0.01",
             "balance": 123.33,
             "equity": 128.99,
             "unrealisedPNL": 1.22,

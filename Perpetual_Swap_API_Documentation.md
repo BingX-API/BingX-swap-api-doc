@@ -276,6 +276,7 @@ To prevent abuse, Bingx imposes rate limits on incoming requests. When a rate li
 | symbol     | Trading pair symbol, returned in the form of A_B |
 | name       | The name of the underlying index |
 | size       | Contract value, for example 0.0001 BTC |
+| minStep          | String  | User's step                                                              |
 | volumePrecision  | The precision of trading volume  |
 | pricePrecision   | The precision of price |
 | feeRate          | Trading fees |
@@ -293,6 +294,7 @@ To prevent abuse, Bingx imposes rate limits on incoming requests. When a rate li
             "symbol": "BTC-USDT",
             "name": "BTC-USDT",
             "size": "0.0001",
+            "minStep": "0.5",
             "volumePrecision": 0,
             "pricePrecision": 2,
             "feeRate": 0.001,
@@ -304,6 +306,7 @@ To prevent abuse, Bingx imposes rate limits on incoming requests. When a rate li
             "symbol": "ETH_USDT",
             "name": "ETH-USDT",
             "size": "0.01",
+            "minStep": "0.05",
             "volumePrecision": 0,
             "pricePrecision": 2,
             "feeRate": 0.001,
@@ -865,7 +868,6 @@ Get asset information of user‘s Perpetual Account
 | code            | Int64   | error code, 0 means successfully response, others means response failure |
 | msg             | String  | Error Details Description                                                |
 | userId          | String  | User's ID                                                                |
-| minStep          | String  | User's step                                                              |
 | currency        | String  | User‘s asset                                                             |
 | balance         | Float64 | Asset Balance                                                            |
 | equity          | Float64 | Net Asset Value                                                          |
@@ -885,7 +887,6 @@ Get asset information of user‘s Perpetual Account
         "data": {
             "userId": "123",
             "currency": "USDT",
-            "minStep": "0.01",
             "balance": 123.33,
             "equity": 128.99,
             "unrealisedPNL": 1.22,
