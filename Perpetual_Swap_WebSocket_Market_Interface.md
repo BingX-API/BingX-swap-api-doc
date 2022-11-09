@@ -232,7 +232,7 @@ Confirmation of Unsubscription:
 **Subscription Type**
 
     The dataType is market.kline.$Symbol.$KlineType. 
-    E.g. market.kline.$Symbol.BTC-USDT.1min
+    E.g. market.kline.BTC-USDT.1min
 
 **Subscription Parameters**
 

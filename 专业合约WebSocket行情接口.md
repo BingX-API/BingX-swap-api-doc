@@ -232,7 +232,7 @@ WebSocket 行情接口返回的所有数据都进行了 GZIP 压缩，需要 cli
 
 **订阅类型**
 
-    dataType 为 market.kline.$Symbol.$KlineType，比如market.kline.$Symbol.BTC-USDT.1min
+    dataType 为 market.kline.$Symbol.$KlineType，比如market.kline.BTC-USDT.1min
 
 **订阅参数**
 
