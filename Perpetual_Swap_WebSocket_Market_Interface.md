@@ -297,7 +297,7 @@ Confirmation of Unsubscription:
 
 # Websocket Account Data
 
-- Note that websocket authentication is required to obtain such information, use listenKey, and see the [Rest interface documentation for details](https://bingx-api.github.io/docs/swap/other-interface.html).
+- Note that websocket authentication is required to obtain such information, use listenKey, and see the [Rest interface documentation for details](https://github.com/BingX-API/BingX-swap-api-doc/blob/master/Perpetual_Swap_API_Documentation.md#other-interface).
 - The base URL of Websocket Market Data is: `wss://open-ws-swap.bingbon.pro/ws`
 - User Data Streams are accessed at `/$listenKey`
 

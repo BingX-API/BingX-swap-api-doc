@@ -299,7 +299,7 @@ WebSocket 行情接口返回的所有数据都进行了 GZIP 压缩，需要 cli
    ```
 # Websocket 账户信息推送
 
-- 注意需要获取此类信息需要 websocket 鉴权，使用 listenKey，详细方式查看 [Rest 接口文档](https://github.com/BingX-API/BingX-swap-api-doc/blob/master/%E4%B8%93%E4%B8%9A%E5%90%88%E7%BA%A6API%E6%8E%A5%E5%8F%A3.md#%E5%85%B6%E4%BB%96%E6%8E%A5%E5%8F%A3
+- 注意需要获取此类信息需要 websocket 鉴权，使用 listenKey，详细方式查看 [Rest 接口文档](https://github.com/BingX-API/BingX-swap-api-doc/blob/master/%E4%B8%93%E4%B8%9A%E5%90%88%E7%BA%A6API%E6%8E%A5%E5%8F%A3.md#%E5%85%B6%E4%BB%96%E6%8E%A5%E5%8F%A3)
 - websocket接口是 wss://open-ws-swap.bingbon.pro/ws
 - 订阅账户数据流的stream名称为 /{listenKey}
 ```
