@@ -52,6 +52,10 @@ Bingx Developer Documentation
   - [16. Cancel Stop Order](#16-cancel-stop-order)
   - [17. Query Stop Orders](#17-query-stop-orders)
   - [18. Query History Stop Orders](#18-query-history-stop-orders)
+- [Other Interface](#other-interface)
+  - [generate Listen Key](#generate-listen-key)
+  - [extend Listen Key Validity period](#extend-listen-key-validity-period)
+  - [delete Listen Key](#delete-listen-key)
 
 <!-- /TOC -->
 
@@ -1923,4 +1927,97 @@ POST
         },
         "message": ""
     }
+```
+
+# Other Interface
+
+Use following API to fetch and update listenKey:
+
+## generate Listen Key
+
+listen key Valid for 1 hour
+
+**interface**
+
+```
+    POST /api/v1/user/auth/userDataStream
+```
+
+CURL
+
+```
+curl -X POST 'https://api-swap-rest.bingbon.pro/api/v1/user/auth/userDataStream' --header "X-BX-APIKEY:g6ikQYpMiWLecMQ39DUivd4ENem9ygzAim63xUPFhRtCFBUDNLajRoZNiubPemKT"
+
+```
+
+**request header parameters**
+
+| parameter name          | type   | Is it required | Remark         |
+| ------         |--------|----------------|------------|
+| X-BX-APIKEY    | string | yes            | API KEY |
+
+**response**
+
+| parameter name                | type   | Remark     |
+| ------               |--------|------------|
+| listenKey               | string | listen Key |
+
+```
+{"listenKey":"a8ea75681542e66f1a50a1616dd06ed77dab61baa0c296bca03a9b13ee5f2dd7"}
+```
+
+## extend Listen Key Validity period
+
+The validity period is extended to 60 minutes after this call, and it is recommended to send a ping every 30 minutes.
+
+**interface**
+
+```
+    PUT /api/v1/user/auth/userDataStream
+```
+
+```
+curl -i -X PUT 'https://api-swap-rest.bingbon.pro/api/v1/user/auth/userDataStream?listenKey=d84d39fe78762b39e202ba204bf3f7ebed43bbe7a481299779cb53479ea9677d'
+```
+
+**request parameters**
+
+| parameter name          | type   | Is it required | Remark         |
+| ------         | ------  |----------------|------------|
+| listenKey   | string  | yes            | API KEY |
+
+**response**
+
+```
+http status 200 success
+http status 204 not content
+http status 404 not find key
+```
+
+## delete Listen Key
+
+delete User data flow.
+
+**interface**
+
+```
+    DELETE /api/v1/user/auth/userDataStream
+```
+
+```
+curl -i -X DELETE 'https://api-swap-rest.bingbon.pro/api/v1/user/auth/userDataStream?listenKey=d84d39fe78762b39e202ba204bf3f7ebed43bbe7a481299779cb53479ea9677d'
+```
+
+**request parameters**
+
+| parameter name          | type   | Is it required | Remark        |
+| ------         | ------  |----------------|-----------|
+| listenKey   | string  | yes            | API KEY |
+
+**response**
+
+```
+http status 200 success
+http status 204 not content
+http status 404 not find key
 ```

@@ -15,9 +15,8 @@ Bingx Developer Documentation
   - [1. Subscribe Market Depth Data](#1-subscribe-market-depth-data)
   - [2. Subscribe the Latest Trade Detail](#2-subscribe-the-latest-trade-detail)
   - [3. Subscribe K-Line Data](#3-subscribe-k-line-data)
-  
-    1. [Subscribe Market Depth Data](#Subscribe Market Depth Data)
-    2. [Subscribe the Latest Trade Detail](#Subscribe the Latest Trade Detail)
+- [Websocket Account Data](#Websocket-account-data)
+  - [Subscribe to account balance push](#1-Subscribe-to-account-balance-push)
 
 <!-- /TOC -->
 
@@ -294,6 +293,66 @@ Confirmation of Unsubscription:
      },
      "dataType": "market.kline.BTC-USDT.30min"
  }
+```
+
+# Websocket Account Data
+
+- Note that websocket authentication is required to obtain such information, use listenKey, and see the [Rest interface documentation for details](https://bingx-api.github.io/docs/swap/other-interface.html).
+- The base URL of Websocket Market Data is: `wss://open-ws-swap.bingbon.pro/ws`
+- User Data Streams are accessed at `/$listenKey`
+
+```
+wss://open-ws-swap.bingbon.pro/ws/94bE3nW8BuyGCUsvjRKPPRt1lDomEeJlEO8ABMLxYM6rT92u
+```
+
+## 1. Subscribe to account balance push
+
+**Subscription Type**
+```
+dataType is ACCOUNT_UPDATE
+```
+
+**Subscription Example**
+```
+{"id":"gdfg2311-d0f6-4a70-8d5a-043e4c741b40","dataType":"ACCOUNT_UPDATE"}
+```
+
+```
+The field "m" represents the reason for the launch of the event, including the following possible types:
+
+    - DEPOSIT
+    - WITHDRAW
+    - FUNDING_FEE
+    - ORDER
+```
+
+**Push Data**
+
+| return field | field description                      |  
+|----|---------------------------   |
+| e  | Event Type             |
+| E  | Event Time             |
+| m  | Event reason type              |
+| a  | Asset             |
+| wb   | Wallet Balance          |
+| cw   | Cross Wallet Balance          |
+| bc  | Balance Change except PnL and Commission             |
+
+```
+# Response
+{
+	"e": "ACCOUNT_UPDATE", // Event Type
+	"E": 1671159080000,  // Event Time
+	"a": {
+		"B": [{
+			"a": "USDT", // Asset
+			"bc": "-66", // Balance Change except PnL and Commission
+			"cw": "4470.890393795533", // Cross Wallet Balance
+			"wb": "4499.53918561" // Wallet Balance
+		}],
+		"m": "WITHDRAW" // Event reason type 
+	}
+}
 ```
 
 **Remarks**

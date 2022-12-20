@@ -14,6 +14,8 @@ Bingx开发者文档([English Docs](./Perpetual_Swap_WebSocket_Market_Interface.
     - [订阅合约交易深度](#1-订阅合约交易深度)
     - [订单最新成交记录](#2-订单最新成交记录)
     - [订阅合约k线数据](#3-订阅合约k线数据)
+- [Websocket 账户信息推送](#Websocket-账户信息推送)
+  - [订阅资产更新数据](#1-订阅资产更新数据)
 
 <!-- /TOC -->
 
@@ -295,7 +297,63 @@ WebSocket 行情接口返回的所有数据都进行了 GZIP 压缩，需要 cli
         "dataType": "market.kline.BTC-USDT.30min" // 数据类型
     }
    ```
+# Websocket 账户信息推送
+
+- 注意需要获取此类信息需要 websocket 鉴权，使用 listenKey，详细方式查看 [Rest 接口文档](https://github.com/BingX-API/BingX-swap-api-doc/blob/master/%E4%B8%93%E4%B8%9A%E5%90%88%E7%BA%A6API%E6%8E%A5%E5%8F%A3.md#%E5%85%B6%E4%BB%96%E6%8E%A5%E5%8F%A3
+- websocket接口是 wss://open-ws-swap.bingbon.pro/ws
+- 订阅账户数据流的stream名称为 /{listenKey}
+```
+wss://open-ws-swap.bingbon.pro/ws/94bE3nW8BuyGCUsvjRKPPRt1lDomEeJlEO8ABMLxYM6rT92u
+```
+## 1. 订阅资产更新数据
+
+**订阅类型**
+
+    dataType 为 ACCOUNT_UPDATE
+
+**订阅例子**
+
+    {"id":"e745cd6d-d0f6-4a70-8d5a-043e4c741b40","dataType":"ACCOUNT_UPDATE"}
+
+**推送数据**
+
+| 返回字段     | 字段说明               |  
+|----------|--------------------|
+| dataType | 数据类型 |
+| data     | 推送内容               |
+| E        | 事件时间                |
+| e        | 事件类型                |
+| a        | 账户更新事件               |
+| m        | 事件推出原因                |
+| B        | 余额信息                |
+
+- 字段"m"代表了事件推出的原因，包含了以下可能类型:
+  - DEPOSIT(入金)
+  - WITHDRAW(出金)
+  - FUNDING_FEE(资金费用)
+  - ORDER(订单变更)
+- 字段"bc"代表了钱包余额的改变量，即 balance change，但注意其不包含仓位盈亏及交易手续费。
+
+   ```javascript
+    # Response
+    {
+            "e": "ACCOUNT_UPDATE",                // 事件类型
+            "E": 1564745798939,                   // 事件时间
+            "a":                                  // 账户更新事件
+                {
+                "m": "WITHDRAW",                   //事件推出原因
+                "B":[                             // 余额信息
+                  {
+                    "a":"USDT",                   // 资产名称
+                    "wb":"4499.53918561",       // 钱包余额
+                    "cw":"4470.890393795533",          // 除去逐仓仓位保证金的钱包余额
+                    "bc":"-66"            // 除去盈亏与交易手续费以外的钱包余额改变量
+              }
+          ]
+        }
+    }
+   ```
 
   **备注**
 
-    更多返回错误代码请看首页的错误代码描述
+  更多返回错误代码请看首页的错误代码描述
