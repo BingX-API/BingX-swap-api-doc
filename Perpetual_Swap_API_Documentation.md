@@ -287,6 +287,8 @@ To prevent abuse, Bingx imposes rate limits on incoming requests. When a rate li
 | tradeMinLimit       | Minimum trading unit |
 | currency   | Settlement currency |
 | asset      | Contract denomination asset |
+| maxLongLeverage      |         Maximum leverage for long trades         |
+| maxShortLeverage      |     Maximum leverage for short trades            |
 
 ```javascript
     # Response
@@ -304,6 +306,8 @@ To prevent abuse, Bingx imposes rate limits on incoming requests. When a rate li
             "feeRate": 0.001,
             "tradeMinLimit": 1,
             "currency": "USDT",
+            "maxLongLeverage": 150,
+            "maxShortLeverage": 150,
             "asset": "BTC"
         }, {
             "contractId": "101",
@@ -316,6 +320,8 @@ To prevent abuse, Bingx imposes rate limits on incoming requests. When a rate li
             "feeRate": 0.001,
             "tradeMinLimit": 1,
             "currency": "USDT",
+            "maxLongLeverage": 150,
+            "maxShortLeverage": 150,
             "asset": "ETH"
         }],
         ...
