@@ -1,0 +1,513 @@
+{
+	"info": {
+		"_postman_id": "f298f1aa-a6a8-4959-8872-1fd51a4df6ea",
+		"name": "api_demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getBalance",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var apiKey = pm.collectionVariables.get(\"apiKey\");",
+							"var secretKey = pm.collectionVariables.get(\"secretKey\");",
+							"",
+							"var getOriginString = function(method, path, params) {",
+							"    var originString = method+path;",
+							"    var first = true;",
+							"    var keys = Array.from(params.keys());",
+							"    keys.sort(function(l, r) {",
+							"  \t    if (l < r) {",
+							"  \t\t\treturn -1;",
+							"  \t\t}",
+							"  \t    if (l > r) {",
+							"  \t\t    return 1;",
+							"  \t    }",
+							"  \t\treturn 0;",
+							"  \t});",
+							"  \t\t",
+							"    for (var i=0; i<keys.length; i++) {",
+							"  \t\tif (!first) {",
+							"  \t\t\toriginString += \"&\";",
+							"  \t\t}",
+							"  \t\tfirst = false;",
+							"  \t\toriginString += keys[i] + \"=\" + params.get(keys[i]);",
+							"  \t}",
+							"  \treturn originString;",
+							"};",
+							"",
+							"var getSignature = function(originString) {",
+							"  \tvar signature = CryptoJS.HmacSHA256(originString, secretKey);",
+							"  \tsignature = CryptoJS.enc.Base64.stringify(signature);",
+							"  \tsignature = encodeURIComponent(signature);",
+							"  \treturn signature;",
+							"};",
+							"",
+							"var path = \"/api/v1/user/getBalance\";",
+							"var method = \"POST\";",
+							"var params = new Map;",
+							"params.set(\"currency\", \"USDT\");",
+							"params.set(\"apiKey\", apiKey);",
+							"params.set(\"timestamp\", new Date().getTime());",
+							"var originString = getOriginString(method, path, params);",
+							"var sign = getSignature(originString);",
+							"",
+							"pm.collectionVariables.set(\"sign\", sign);",
+							"pm.collectionVariables.set(\"timestamp\", params.get(\"timestamp\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/getBalance?currency=USDT&apiKey={{apiKey}}&timestamp={{timestamp}}&sign={{sign}}",
+					"protocol": "https",
+					"host": [
+						"api-swap-rest",
+						"bingbon",
+						"pro"
+					],
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"getBalance"
+					],
+					"query": [
+						{
+							"key": "currency",
+							"value": "USDT"
+						},
+						{
+							"key": "apiKey",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "timestamp",
+							"value": "{{timestamp}}"
+						},
+						{
+							"key": "sign",
+							"value": "{{sign}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "placeOpenOrder",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var apiKey = pm.collectionVariables.get(\"apiKey\");",
+							"var secretKey = pm.collectionVariables.get(\"secretKey\");",
+							"",
+							"var getOriginString = function(method, path, params) {",
+							"    var originString = method+path;",
+							"    var first = true;",
+							"    var keys = Array.from(params.keys());",
+							"    keys.sort(function(l, r) {",
+							"  \t    if (l < r) {",
+							"  \t\t\treturn -1;",
+							"  \t\t}",
+							"  \t    if (l > r) {",
+							"  \t\t    return 1;",
+							"  \t    }",
+							"  \t\treturn 0;",
+							"  \t});",
+							"  \t\t",
+							"    for (var i=0; i<keys.length; i++) {",
+							"  \t\tif (!first) {",
+							"  \t\t\toriginString += \"&\";",
+							"  \t\t}",
+							"  \t\tfirst = false;",
+							"  \t\toriginString += keys[i] + \"=\" + params.get(keys[i]);",
+							"  \t}",
+							"  \treturn originString;",
+							"};",
+							"",
+							"var getSignature = function(originString) {",
+							"  \tvar signature = CryptoJS.HmacSHA256(originString, secretKey);",
+							"  \tsignature = CryptoJS.enc.Base64.stringify(signature);",
+							"  \tsignature = encodeURIComponent(signature);",
+							"  \treturn signature;",
+							"};",
+							"",
+							"var path = \"/api/v1/user/trade\";",
+							"var method = \"POST\";",
+							"var params = new Map;",
+							"params.set(\"apiKey\", apiKey);",
+							"params.set(\"timestamp\", new Date().getTime());",
+							"params.set(\"symbol\", pm.request.url.query.get(\"symbol\"));",
+							"params.set(\"side\", pm.request.url.query.get(\"side\"));",
+							"params.set(\"entrustPrice\", pm.request.url.query.get(\"entrustPrice\"));",
+							"params.set(\"entrustVolume\", pm.request.url.query.get(\"entrustVolume\"));",
+							"params.set(\"tradeType\", pm.request.url.query.get(\"tradeType\"));",
+							"params.set(\"action\", pm.request.url.query.get(\"action\"));",
+							"var originString = getOriginString(method, path, params);",
+							"var sign = getSignature(originString);",
+							"",
+							"pm.collectionVariables.set(\"timestamp\", params.get(\"timestamp\"));",
+							"pm.collectionVariables.set(\"sign\", sign);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/trade?apiKey={{apiKey}}&timestamp={{timestamp}}&symbol=BTC-USDT&side=Bid&entrustPrice=10000&entrustVolume=0.0004&tradeType=Market&action=Open&sign={{sign}}",
+					"protocol": "https",
+					"host": [
+						"api-swap-rest",
+						"bingbon",
+						"pro"
+					],
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"trade"
+					],
+					"query": [
+						{
+							"key": "apiKey",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "timestamp",
+							"value": "{{timestamp}}"
+						},
+						{
+							"key": "symbol",
+							"value": "BTC-USDT"
+						},
+						{
+							"key": "side",
+							"value": "Bid"
+						},
+						{
+							"key": "entrustPrice",
+							"value": "10000"
+						},
+						{
+							"key": "entrustVolume",
+							"value": "0.0004"
+						},
+						{
+							"key": "tradeType",
+							"value": "Market"
+						},
+						{
+							"key": "action",
+							"value": "Open"
+						},
+						{
+							"key": "sign",
+							"value": "{{sign}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPositions",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var apiKey = pm.collectionVariables.get(\"apiKey\");",
+							"var secretKey = pm.collectionVariables.get(\"secretKey\");",
+							"",
+							"var getOriginString = function(method, path, params) {",
+							"    var originString = method+path;",
+							"    var first = true;",
+							"    var keys = Array.from(params.keys());",
+							"    keys.sort(function(l, r) {",
+							"  \t    if (l < r) {",
+							"  \t\t\treturn -1;",
+							"  \t\t}",
+							"  \t    if (l > r) {",
+							"  \t\t    return 1;",
+							"  \t    }",
+							"  \t\treturn 0;",
+							"  \t});",
+							"  \t\t",
+							"    for (var i=0; i<keys.length; i++) {",
+							"  \t\tif (!first) {",
+							"  \t\t\toriginString += \"&\";",
+							"  \t\t}",
+							"  \t\tfirst = false;",
+							"  \t\toriginString += keys[i] + \"=\" + params.get(keys[i]);",
+							"  \t}",
+							"  \treturn originString;",
+							"};",
+							"",
+							"var getSignature = function(originString) {",
+							"  \tvar signature = CryptoJS.HmacSHA256(originString, secretKey);",
+							"  \tsignature = CryptoJS.enc.Base64.stringify(signature);",
+							"  \tsignature = encodeURIComponent(signature);",
+							"  \treturn signature;",
+							"};",
+							"",
+							"var path = \"/api/v1/user/getPositions\";",
+							"var method = \"POST\";",
+							"var params = new Map;",
+							"params.set(\"apiKey\", apiKey);",
+							"params.set(\"timestamp\", new Date().getTime());",
+							"params.set(\"symbol\", pm.request.url.query.get(\"symbol\"));",
+							"var originString = getOriginString(method, path, params);",
+							"var sign = getSignature(originString);",
+							"",
+							"pm.collectionVariables.set(\"timestamp\", params.get(\"timestamp\"));",
+							"pm.collectionVariables.set(\"sign\", sign);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/getPositions?symbol=BTC-USDT&apiKey={{apiKey}}&timestamp={{timestamp}}&sign={{sign}}",
+					"protocol": "https",
+					"host": [
+						"api-swap-rest",
+						"bingbon",
+						"pro"
+					],
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"getPositions"
+					],
+					"query": [
+						{
+							"key": "symbol",
+							"value": "BTC-USDT"
+						},
+						{
+							"key": "apiKey",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "timestamp",
+							"value": "{{timestamp}}"
+						},
+						{
+							"key": "sign",
+							"value": "{{sign}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "placeCloseOrder",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var apiKey = pm.collectionVariables.get(\"apiKey\");",
+							"var secretKey = pm.collectionVariables.get(\"secretKey\");",
+							"",
+							"var getOriginString = function(method, path, params) {",
+							"    var originString = method+path;",
+							"    var first = true;",
+							"    var keys = Array.from(params.keys());",
+							"    keys.sort(function(l, r) {",
+							"  \t    if (l < r) {",
+							"  \t\t\treturn -1;",
+							"  \t\t}",
+							"  \t    if (l > r) {",
+							"  \t\t    return 1;",
+							"  \t    }",
+							"  \t\treturn 0;",
+							"  \t});",
+							"  \t\t",
+							"    for (var i=0; i<keys.length; i++) {",
+							"  \t\tif (!first) {",
+							"  \t\t\toriginString += \"&\";",
+							"  \t\t}",
+							"  \t\tfirst = false;",
+							"  \t\toriginString += keys[i] + \"=\" + params.get(keys[i]);",
+							"  \t}",
+							"  \treturn originString;",
+							"};",
+							"",
+							"var getSignature = function(originString) {",
+							"  \tvar signature = CryptoJS.HmacSHA256(originString, secretKey);",
+							"  \tsignature = CryptoJS.enc.Base64.stringify(signature);",
+							"  \tsignature = encodeURIComponent(signature);",
+							"  \treturn signature;",
+							"};",
+							"",
+							"var path = \"/api/v1/user/trade\";",
+							"var method = \"POST\";",
+							"var params = new Map;",
+							"params.set(\"apiKey\", apiKey);",
+							"params.set(\"timestamp\", new Date().getTime());",
+							"params.set(\"symbol\", pm.request.url.query.get(\"symbol\"));",
+							"params.set(\"side\", pm.request.url.query.get(\"side\"));",
+							"params.set(\"entrustPrice\", pm.request.url.query.get(\"entrustPrice\"));",
+							"params.set(\"entrustVolume\", pm.request.url.query.get(\"entrustVolume\"));",
+							"params.set(\"tradeType\", pm.request.url.query.get(\"tradeType\"));",
+							"params.set(\"action\", pm.request.url.query.get(\"action\"));",
+							"var originString = getOriginString(method, path, params);",
+							"var sign = getSignature(originString);",
+							"",
+							"pm.collectionVariables.set(\"timestamp\", params.get(\"timestamp\"));",
+							"pm.collectionVariables.set(\"sign\", sign);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api-swap-rest.bingbon.pro/api/v1/user/trade?apiKey={{apiKey}}&timestamp={{timestamp}}&symbol=BTC-USDT&side=Ask&entrustPrice=30000&entrustVolume=0.0004&tradeType=Market&action=Close&sign={{sign}}",
+					"protocol": "https",
+					"host": [
+						"api-swap-rest",
+						"bingbon",
+						"pro"
+					],
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"trade"
+					],
+					"query": [
+						{
+							"key": "apiKey",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "timestamp",
+							"value": "{{timestamp}}"
+						},
+						{
+							"key": "symbol",
+							"value": "BTC-USDT"
+						},
+						{
+							"key": "side",
+							"value": "Ask"
+						},
+						{
+							"key": "entrustPrice",
+							"value": "30000"
+						},
+						{
+							"key": "entrustVolume",
+							"value": "0.0004"
+						},
+						{
+							"key": "tradeType",
+							"value": "Market"
+						},
+						{
+							"key": "action",
+							"value": "Close"
+						},
+						{
+							"key": "sign",
+							"value": "{{sign}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var getOriginString = function(method, path, params) {",
+					"    var originString = method+path;",
+					"    var first = true;",
+					"    var keys = Array.from(params.keys());",
+					"    keys.sort(function(l, r) {",
+					"  \t    if (l < r) {",
+					"  \t\t\treturn -1;",
+					"  \t\t}",
+					"  \t    if (l > r) {",
+					"  \t\t    return 1;",
+					"  \t    }",
+					"  \t\treturn 0;",
+					"  \t});",
+					"  \t\t",
+					"    for (var i=0; i<keys.length; i++) {",
+					"  \t\tif (!first) {",
+					"  \t\t\toriginString += \"&\";",
+					"  \t\t}",
+					"  \t\tfirst = false;",
+					"  \t\toriginString += keys[i] + \"=\" + params.get(keys[i]);",
+					"  \t}",
+					"  \treturn originString;",
+					"};",
+					"",
+					"var getSignature = function(originString) {",
+					"  \tvar signature = CryptoJS.HmacSHA256(originString, secretKey);",
+					"  \tsignature = CryptoJS.enc.Base64.stringify(signature);",
+					"  \tsignature = encodeURIComponent(signature);",
+					"  \treturn signature;",
+					"};"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "apiKey",
+			"value": ""
+		},
+		{
+			"key": "secretKey",
+			"value": ""
+		},
+		{
+			"key": "timestamp",
+			"value": ""
+		},
+		{
+			"key": "sign",
+			"value": ""
+		}
+	]
+}
